@@ -40,7 +40,7 @@ esac
 
 script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 repo_root="$(cd -- "$script_dir/.." && pwd)"
-image_tag="blog-cloudflare-tofu:local"
+image_tag="ghcr.io/opentofu/opentofu:1.10.5"
 infra_dir="/workspace/infra/cloudflare"
 
 env_args=()
@@ -55,8 +55,6 @@ do
     env_args+=(-e "$var_name")
   fi
 done
-
-docker build -t "$image_tag" -f "$repo_root/infra/cloudflare/Dockerfile" "$repo_root" >/dev/null
 
 quoted_args=""
 for arg in "$@"; do
@@ -84,6 +82,7 @@ if [[ -t 0 && -t 1 ]]; then
 fi
 
 docker run --rm -i "${tty_args[@]}" \
+  --user "$(id -u):$(id -g)" \
   -v "$repo_root:/workspace" \
   "${env_args[@]}" \
   --entrypoint /bin/sh \
