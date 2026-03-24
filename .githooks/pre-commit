@@ -9,6 +9,11 @@ if [[ ! -x ./scripts/comfyui-site-images.sh ]]; then
   exit 1
 fi
 
+if [[ "${COMFYUI_SKIP_GENERATION:-0}" == "1" ]]; then
+  echo "info: skipping ComfyUI image generation because COMFYUI_SKIP_GENERATION=1" >&2
+  exit 0
+fi
+
 ./scripts/comfyui-site-images.sh generate-staged
 
 git add public/images/generated
