@@ -1,22 +1,27 @@
-/*
-  The CSS in this file is based on the Astro blog starter with a custom dark refresh
-  for blog.brandoncamenisch.com.
-*/
-
 :root {
-  --accent: 124, 58, 237;
-  --accent-dark: 91, 33, 182;
-  --black: 12, 18, 32;
-  --gray: 130, 146, 180;
-  --gray-light: 218, 224, 238;
-  --gray-dark: 223, 231, 246;
-  --surface: 18, 25, 44;
-  --surface-alt: 28, 36, 61;
-  --text: 234, 241, 255;
-  --muted: 152, 167, 199;
-  --border: 124, 58, 237;
-  --gray-gradient: rgba(23, 31, 54, 0.92), rgba(12, 18, 32, 1);
-  --box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(var(--border), 0.12);
+  --accent: 83, 255, 136;
+  --accent-bright: 135, 255, 172;
+  --accent-dark: 40, 122, 67;
+  --black: 2, 10, 5;
+  --gray: 72, 116, 80;
+  --gray-light: 180, 255, 194;
+  --gray-dark: 205, 255, 214;
+  --surface: 6, 18, 10;
+  --surface-alt: 10, 28, 16;
+  --text: 201, 255, 211;
+  --muted: 114, 196, 128;
+  --border: 83, 255, 136;
+  --glow: 83, 255, 136;
+  --warning: 255, 210, 79;
+  --box-shadow: 0 0 0 1px rgba(var(--border), 0.18), 0 0 26px rgba(var(--glow), 0.14);
+}
+
+@font-face {
+  font-family: 'NotoMonoNerd';
+  src: url('/fonts/noto-mono-nerd-font-mono-regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -35,27 +40,50 @@
   font-display: swap;
 }
 
+html {
+  background: rgb(var(--black));
+}
+
 body {
-  font-family: 'Atkinson', sans-serif;
+  font-family: 'NotoMonoNerd', 'Atkinson', monospace;
   margin: 0;
   padding: 0;
   text-align: left;
   background:
-    radial-gradient(circle at top, rgba(56, 189, 248, 0.12), transparent 28%),
-    radial-gradient(circle at right top, rgba(124, 58, 237, 0.16), transparent 30%),
-    linear-gradient(var(--gray-gradient)) no-repeat;
+    radial-gradient(circle at top, rgba(var(--glow), 0.12), transparent 30%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.24), rgba(0, 0, 0, 0.5)),
+    linear-gradient(180deg, rgba(var(--surface-alt), 0.94), rgba(var(--black), 1));
   background-color: rgb(var(--black));
   background-size: 100% 100%;
   word-wrap: break-word;
   overflow-wrap: break-word;
   color: rgb(var(--text));
-  font-size: 20px;
-  line-height: 1.7;
+  font-size: 19px;
+  line-height: 1.75;
+  text-shadow: 0 0 8px rgba(var(--glow), 0.05);
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(rgba(var(--glow), 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--glow), 0.015) 1px, transparent 1px);
+  background-size: 100% 4px, 4px 100%;
+  opacity: 0.22;
+  z-index: 0;
+}
+
+body > * {
+  position: relative;
+  z-index: 1;
 }
 
 main {
-  width: 720px;
-  max-width: calc(100% - 2em);
+  width: 840px;
+  max-width: calc(100% - 2rem);
   margin: auto;
   padding: 3em 1em;
 }
@@ -97,11 +125,11 @@ b {
 }
 
 a {
-  color: rgb(125, 211, 252);
+  color: rgb(var(--accent-bright));
 }
 
 a:hover {
-  color: rgb(196, 181, 253);
+  color: rgb(var(--gray-light));
 }
 
 p {
@@ -129,8 +157,9 @@ img {
 
 code {
   padding: 2px 5px;
-  background-color: rgba(var(--surface-alt), 0.96);
+  background-color: rgba(var(--surface-alt), 0.98);
   border-radius: 2px;
+  border: 1px solid rgba(var(--border), 0.18);
 }
 
 pre {
@@ -138,6 +167,7 @@ pre {
   border-radius: 8px;
   background: rgba(var(--surface-alt), 0.96);
   border: 1px solid rgba(var(--border), 0.2);
+  overflow-x: auto;
 }
 
 pre > code {
@@ -145,10 +175,10 @@ pre > code {
 }
 
 blockquote {
-  border-left: 4px solid rgb(var(--accent));
+  border-left: 4px solid rgb(var(--warning));
   padding: 0 0 0 20px;
   margin: 0;
-  font-size: 1.333em;
+  font-size: 1.1em;
 }
 
 hr {
@@ -178,4 +208,34 @@ hr {
   clip: rect(1px, 1px, 1px, 1px);
   clip-path: inset(50%);
   white-space: nowrap;
+}
+
+.terminal-panel {
+  background: rgba(var(--surface), 0.88);
+  border: 1px solid rgba(var(--border), 0.35);
+  border-radius: 14px;
+  box-shadow: var(--box-shadow);
+  padding: 1.4rem 1.5rem;
+  margin-bottom: 1.4rem;
+}
+
+.prompt {
+  margin: 0 0 1rem 0;
+  color: rgb(var(--accent-bright));
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.92rem;
+  text-shadow: 0 0 12px rgba(var(--glow), 0.45);
+}
+
+.terminal-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid rgba(var(--border), 0.4);
+  border-radius: 8px;
+  background: rgba(var(--surface-alt), 0.9);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
