@@ -10,6 +10,16 @@
       "src/consts.ts"
     ]
   },
+  "article_images": {
+    "art_direction_prefix": "Create a supporting in-article image that feels like a visual insert inside a technical blog post. It should stay aligned with the site's terminal-and-tmux aesthetic while being more focused and specific than the page hero image. Favor a grounded workspace scene, believable hardware, and clear composition that can sit inside long-form prose without overpowering it.",
+    "negative_prompt_seed": "watermark, logo, signature, blurry, unreadable text, fantasy armor, exaggerated skyline, floating holograms, cluttered collage, duplicate monitors, extra limbs, cartoon rendering, glossy CGI showroom",
+    "width": 1344,
+    "height": 768,
+    "steps": 28,
+    "cfg": 6.0,
+    "sampler_name": "euler",
+    "scheduler": "normal"
+  },
   "regenerate_all_on": [
     ".githooks/pre-commit",
     "comfyui/Dockerfile",

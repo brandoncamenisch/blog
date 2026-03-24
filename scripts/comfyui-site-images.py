@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import shutil
 import subprocess
@@ -11,6 +12,8 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 from textwrap import shorten
+
+import yaml
 
 
 def parse_args() -> argparse.Namespace:
@@ -35,9 +38,120 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def load_manifest(path: Path) -> dict:
+def read_frontmatter(text: str, source: str) -> dict:
+    lines = text.splitlines()
+    if not lines or lines[0].strip() != "---":
+        return {}
+
+    for index in range(1, len(lines)):
+        if lines[index].strip() == "---":
+            frontmatter = yaml.safe_load("\n".join(lines[1:index])) or {}
+            if not isinstance(frontmatter, dict):
+                raise ValueError(f"frontmatter in {source} must be a mapping")
+            return frontmatter
+
+    raise ValueError(f"unterminated frontmatter in {source}")
+
+
+def blog_slug_from_path(relative_path: str) -> str:
+    if not relative_path.startswith("src/content/blog/"):
+        raise ValueError(f"unsupported blog content path: {relative_path}")
+    return relative_path[len("src/content/blog/") :].rsplit(".", 1)[0]
+
+
+def generated_article_output(slug: str, image_id: str) -> str:
+    return f"public/images/generated/posts/{slug}/{image_id}.jpg"
+
+
+def article_target_name(slug: str, image_id: str) -> str:
+    return f"article-{slug.replace('/', '--')}-{image_id}"
+
+
+def article_seed(slug: str, image_id: str) -> int:
+    return int(hashlib.sha1(f"{slug}:{image_id}".encode("utf-8")).hexdigest()[:8], 16)
+
+
+def load_blog_frontmatter(
+    repo_root: Path, relative_path: str, staged_changed_paths: set[str]
+) -> dict:
+    if relative_path in staged_changed_paths:
+        staged_content = staged_file_content(repo_root, relative_path)
+        if staged_content is not None:
+            return read_frontmatter(staged_content, f"staged:{relative_path}")
+
+    return read_frontmatter((repo_root / relative_path).read_text(encoding="utf-8"), relative_path)
+
+
+def expand_article_image_targets(
+    repo_root: Path, manifest: dict, staged_changed_paths: set[str]
+) -> dict:
+    article_defaults = manifest.get("article_images")
+    if not article_defaults:
+        return manifest
+
+    targets = dict(manifest.get("targets", {}))
+    blog_root = repo_root / "src" / "content" / "blog"
+
+    for path in sorted(blog_root.rglob("*")):
+        if path.suffix not in {".md", ".mdx"}:
+            continue
+
+        relative_path = path.relative_to(repo_root).as_posix()
+        frontmatter = load_blog_frontmatter(repo_root, relative_path, staged_changed_paths)
+        generated_images = frontmatter.get("generatedImages") or []
+        if not isinstance(generated_images, list):
+            raise ValueError(f"generatedImages in {relative_path} must be a list")
+
+        slug = blog_slug_from_path(relative_path)
+        title = str(frontmatter.get("title", slug)).strip()
+
+        for image in generated_images:
+            if not isinstance(image, dict):
+                raise ValueError(f"generatedImages entries in {relative_path} must be objects")
+
+            image_id = str(image.get("id", "")).strip()
+            brief = str(image.get("brief", "")).strip()
+            alt = str(image.get("alt", "")).strip()
+            caption = str(image.get("caption", "")).strip()
+            if not image_id or not brief or not alt:
+                raise ValueError(
+                    f"generated image entries in {relative_path} require id, alt, and brief"
+                )
+
+            art_direction_parts = [
+                article_defaults["art_direction_prefix"],
+                f"Post title: {title}.",
+                f"Supporting image brief: {brief}.",
+            ]
+            if caption:
+                art_direction_parts.append(f"Caption intent: {caption}.")
+
+            targets[article_target_name(slug, image_id)] = {
+                "watch": [relative_path],
+                "context": [relative_path],
+                "output": generated_article_output(slug, image_id),
+                "art_direction": " ".join(art_direction_parts),
+                "negative_prompt_seed": article_defaults["negative_prompt_seed"],
+                "width": article_defaults["width"],
+                "height": article_defaults["height"],
+                "steps": article_defaults["steps"],
+                "cfg": article_defaults["cfg"],
+                "sampler_name": article_defaults["sampler_name"],
+                "scheduler": article_defaults["scheduler"],
+                "seed": article_seed(slug, image_id),
+            }
+
+    return {
+        **manifest,
+        "targets": targets,
+    }
+
+
+def load_manifest(path: Path, repo_root: Path, staged_changed_paths: set[str]) -> dict:
     with path.open("r", encoding="utf-8") as handle:
-        return json.load(handle)
+        manifest = json.load(handle)
+
+    return expand_article_image_targets(repo_root, manifest, staged_changed_paths)
 
 
 def staged_paths(repo_root: Path) -> list[str]:
@@ -478,8 +592,8 @@ def main() -> int:
     args = parse_args()
     repo_root = Path(args.repo_root).resolve()
     manifest_path = Path(args.manifest).resolve()
-    manifest = load_manifest(manifest_path)
     changed_paths = staged_paths(repo_root)
+    manifest = load_manifest(manifest_path, repo_root, set(changed_paths))
 
     if args.targets_from_staged:
         targets = resolve_targets(manifest, changed_paths)

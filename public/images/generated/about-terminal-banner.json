@@ -1,9 +1,9 @@
 {
   "target": "about",
-  "prompt_id": "dd6cb9ff-d70b-43ac-b7c7-4796e2ddfa7e",
-  "source_output": "comfyui/output/site/about_00004_.png",
-  "prompt": "A static Astro blog with a cyberpunk terminal and tmux-session aesthetic. Generate cinematic but believable scenes with dark charcoal and near-black backgrounds, green phosphor glow, restrained cyan highlights, subtle amber indicator lights, practical monitors, compact home-lab hardware, Linux workstation energy, and real-world desk scale. Favor moody contrast, atmospheric depth, scanline-like light texture, and disciplined composition. Avoid fantasy armor, exaggerated sci-fi cityscapes, excessive magenta, floating holograms, or anything that feels like game splash art. Never include readable text, logos, watermarks, UI overlays, or terminal screenshots with legible words. dark charcoal room, cyberpunk terminal setup, green phosphor glow, subtle cyan highlights, amber indicator lights, compact servers and monitors, notebooks with notes, scanline-like light texture, grounded person in background, Linux workstation energy, atmospheric depth, quiet focus",
-  "negative_prompt": "watermark, logo, signature, blurry, deformed hands, duplicated face, extra arms, unreadable text, low detail, superhero pose, giant cityscape, excessive purple haze, cartoon rendering, glossy CGI showroom",
+  "prompt_id": "61f3f2e8-3e68-45ff-afeb-54074678d106",
+  "source_output": "comfyui/output/site/about_00006_.png",
+  "prompt": "A static Astro blog with a cyberpunk terminal and tmux-session aesthetic. Generate cinematic but believable scenes with dark charcoal and near-black backgrounds, green phosphor glow, restrained cyan highlights, subtle amber indicator lights, practical monitors, compact home-lab hardware, Linux workstation energy, and real-world desk scale. Favor moody contrast, atmospheric depth, scanline-like light texture, and disciplined composition. Avoid fantasy armor, exaggerated sci-fi cityscapes, excessive magenta, floating holograms, or anything that feels like game splash art. Never include readable text, logos, watermarks, UI overlays, or terminal screenshots with legible words. quiet Linux writing desk, compact rack gear, multiple pane-like monitors, moody green phosphor glow, cinematic contrast, first-night launch energy",
+  "negative_prompt": "watermark, logo, signature, blurry, deformed hands, duplicated face, extra arms, unreadable text, low detail, superhero pose, giant cityscape, excessive purple haze, cartoon rendering, glossy CGI showroom, text, duplicate monitors",
   "ollama_model": "qwen2.5:7b-instruct",
   "context_files": [
     "src/components/Header.astro",
