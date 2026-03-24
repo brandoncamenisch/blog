@@ -20,6 +20,13 @@ const posts = (await getCollection('blog')).sort(
 			main {
 				width: 1040px;
 			}
+			.terminal-index {
+				display: grid;
+				gap: 1.2rem;
+			}
+			.intro-panel {
+				padding: 1.2rem 1.4rem;
+			}
 			ul {
 				display: flex;
 				flex-wrap: wrap;
@@ -110,7 +117,11 @@ const posts = (await getCollection('blog')).sort(
 	<body>
 		<Header />
 		<main>
-			<section>
+			<section class="terminal-index">
+				<div class="terminal-panel intro-panel">
+					<p class="prompt">$ ls -la /blog</p>
+					<p>tmux-style scrollback of published entries, newest first.</p>
+				</div>
 				<ul>
 					{
 						posts.map((post) => (
