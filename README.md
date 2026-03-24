@@ -47,17 +47,25 @@ Nothing secret is committed:
 Example local usage:
 
 ```bash
-export CLOUDFLARE_API_TOKEN=...
-export TF_VAR_cloudflare_zone_id=...
+eval "$HOME/.password-store/scripts/export-pass-env.sh haxor/cloudflare/blog-tofu"
 
-cd infra/cloudflare
-tofu init
-tofu plan
-tofu apply
+./scripts/tofu-docker.sh plan
+./scripts/tofu-docker.sh apply -auto-approve
 ```
 
 This configuration manages the `blog` CNAME pointing at
 `brandoncamenisch.github.io`.
+
+For pipeline usage, configure these GitHub Actions secrets:
+
+- `CLOUDFLARE_API_TOKEN`
+- `TF_VAR_CLOUDFLARE_ZONE_ID`
+
+Then use the manual workflow:
+
+- `.github/workflows/cloudflare-tofu.yml`
+
+That workflow runs the same Dockerized OpenTofu path as local usage.
 
 ## Content
 

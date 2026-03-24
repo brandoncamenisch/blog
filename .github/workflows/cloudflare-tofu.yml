@@ -1,0 +1,38 @@
+name: Cloudflare OpenTofu
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: OpenTofu action to run
+        required: true
+        default: plan
+        type: choice
+        options:
+          - plan
+          - apply
+
+permissions:
+  contents: read
+
+jobs:
+  cloudflare-tofu:
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      TF_VAR_cloudflare_zone_id: ${{ secrets.TF_VAR_CLOUDFLARE_ZONE_ID }}
+      TF_VAR_blog_subdomain: blog
+      TF_VAR_blog_target: brandoncamenisch.github.io
+      TF_VAR_proxied: "false"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run OpenTofu in Docker
+        run: |
+          chmod +x scripts/tofu-docker.sh
+          if [ "${{ inputs.action }}" = "apply" ]; then
+            ./scripts/tofu-docker.sh apply -auto-approve
+          else
+            ./scripts/tofu-docker.sh plan
+          fi
