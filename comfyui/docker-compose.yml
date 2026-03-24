@@ -1,0 +1,19 @@
+services:
+  ollama:
+    image: ollama/ollama:0.6.2
+    ports:
+      - "127.0.0.1:11434:11434"
+    volumes:
+      - ./ollama:/root/.ollama
+  comfyui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "127.0.0.1:8188:8188"
+    volumes:
+      - ./models:/workspace/models
+      - ./input:/workspace/input
+      - ./output:/workspace/output
+      - ./user:/workspace/user
+      - ./extra_model_paths.yaml:/workspace/extra_model_paths.yaml:ro

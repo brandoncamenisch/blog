@@ -1,0 +1,60 @@
+{
+  "default_model": "sd_xl_base_1.0.safetensors",
+  "prompt_generation": {
+    "ollama_model": "qwen2.5:7b-instruct",
+    "theme_brief": "A static Astro blog with a cyberpunk terminal and tmux-session aesthetic. Keep images cinematic but grounded, with dark backgrounds, green phosphor glow, cyan accents, practical monitors, home-lab hardware, Linux workstation energy, and no text overlays.",
+    "shared_context": [
+      "src/components/Header.astro",
+      "src/components/Footer.astro",
+      "src/styles/global.css",
+      "src/consts.ts"
+    ]
+  },
+  "regenerate_all_on": [
+    ".githooks/pre-commit",
+    "comfyui/Dockerfile",
+    "comfyui/docker-compose.yml",
+    "comfyui/extra_model_paths.yaml",
+    "comfyui/site-images.json",
+    "scripts/comfyui-site-images.py",
+    "scripts/comfyui-site-images.sh"
+  ],
+  "targets": {
+    "landing": {
+      "watch": [
+        "src/pages/index.astro"
+      ],
+      "context": [
+        "src/pages/index.astro"
+      ],
+      "output": "public/images/generated/landing-terminal-banner.jpg",
+      "art_direction": "Create a wide launch image for the blog homepage that feels like booting into a personal matrix/tmux publishing environment.",
+      "negative_prompt_seed": "watermark, logo, signature, blurry, deformed, low contrast, extra limbs, duplicated screens, unreadable text",
+      "width": 1536,
+      "height": 864,
+      "steps": 28,
+      "cfg": 6.0,
+      "sampler_name": "euler",
+      "scheduler": "normal",
+      "seed": 24032401
+    },
+    "about": {
+      "watch": [
+        "src/pages/about.astro"
+      ],
+      "context": [
+        "src/pages/about.astro"
+      ],
+      "output": "public/images/generated/about-terminal-banner.jpg",
+      "art_direction": "Create a wide about-page image that feels personal, technical, and consistent with a neon Linux home-lab terminal workspace.",
+      "negative_prompt_seed": "watermark, logo, signature, blurry, deformed hands, duplicated face, extra arms, unreadable text, low detail",
+      "width": 1536,
+      "height": 864,
+      "steps": 28,
+      "cfg": 6.0,
+      "sampler_name": "euler",
+      "scheduler": "normal",
+      "seed": 24032402
+    }
+  }
+}

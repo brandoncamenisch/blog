@@ -2,13 +2,13 @@
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import { LANDING_HERO_IMAGE, SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
-    <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+    <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} image={LANDING_HERO_IMAGE} />
   </head>
   <body>
     <Header />
@@ -20,6 +20,14 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
           A cyberpunk-flavored terminal for security notes, Linux automation, homelab experiments,
           and long-form project writeups.
         </p>
+        <div class="launch-art-frame">
+          <img
+            class="launch-art"
+            src={LANDING_HERO_IMAGE}
+            alt="AI-generated terminal control room artwork for the landing page."
+            loading="eager"
+          />
+        </div>
         <div class="hero-actions">
           <a class="terminal-link" href="/blog"><span aria-hidden="true"></span> open /blog</a>
           <a class="terminal-link" href="/rss.xml"><span aria-hidden="true"></span> subscribe /rss.xml</a>
@@ -74,6 +82,19 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
     flex-wrap: wrap;
     gap: 1rem;
     margin-top: 1.5rem;
+  }
+  .launch-art-frame {
+    margin-top: 1.5rem;
+    border: 1px solid rgba(var(--accent), 0.32);
+    border-radius: 12px;
+    overflow: hidden;
+    background: rgba(var(--surface-alt), 0.85);
+    box-shadow: var(--box-shadow);
+  }
+  .launch-art {
+    display: block;
+    width: 100%;
+    border-bottom: 1px solid rgba(var(--border), 0.32);
   }
   .feature-list {
     list-style: none;
