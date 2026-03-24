@@ -1,5 +1,22 @@
 {
   "target": "about",
-  "status": "seeded-placeholder",
-  "note": "Replace with ComfyUI-generated asset after local model setup."
+  "prompt_id": "b02d3ea2-4ac4-4599-8ff7-8533dbee8c00",
+  "source_output": "comfyui/output/site/about_00003_.png",
+  "prompt": "A static Astro blog with a cyberpunk terminal and tmux-session aesthetic. Generate cinematic but believable scenes with dark charcoal and near-black backgrounds, green phosphor glow, restrained cyan highlights, subtle amber indicator lights, practical monitors, compact home-lab hardware, Linux workstation energy, and real-world desk scale. Favor moody contrast, atmospheric depth, scanline-like light texture, and disciplined composition. Avoid fantasy armor, exaggerated sci-fi cityscapes, excessive magenta, floating holograms, or anything that feels like game splash art. Never include readable text, logos, watermarks, UI overlays, or terminal screenshots with legible words. dark charcoal room, cyberpunk terminal setup, green phosphor glow, subtle cyan highlights, amber indicator lights, compact servers and monitors, notebooks with notes, scanline-like light texture, grounded person in the background, Linux workstation energy, atmospheric depth, quiet focus",
+  "negative_prompt": "watermark, logo, signature, blurry, deformed hands, duplicated face, extra arms, unreadable text, low detail, superhero pose, giant cityscape, excessive purple haze, cartoon rendering, glossy CGI showroom",
+  "ollama_model": "qwen2.5:7b-instruct",
+  "context_files": [
+    "src/components/Header.astro",
+    "src/components/Footer.astro",
+    "src/styles/global.css",
+    "src/consts.ts",
+    "src/pages/about.astro"
+  ],
+  "width": 1536,
+  "height": 864,
+  "steps": 28,
+  "cfg": 6.5,
+  "sampler_name": "euler",
+  "scheduler": "normal",
+  "seed": 24032402
 }

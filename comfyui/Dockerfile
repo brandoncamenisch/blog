@@ -11,7 +11,7 @@ WORKDIR /opt
 RUN git clone https://github.com/comfyanonymous/ComfyUI.git \
   && cd ComfyUI \
   && git checkout "$COMFYUI_REF" \
-  && pip install --no-cache-dir -r requirements.txt
+  && pip install --no-cache-dir -r requirements.txt requests
 
 WORKDIR /opt/ComfyUI
 

@@ -1,10 +1,7 @@
-checkpoints:
-  - /workspace/models/checkpoints
-vae:
-  - /workspace/models/vae
-loras:
-  - /workspace/models/loras
-embeddings:
-  - /workspace/models/embeddings
-controlnet:
-  - /workspace/models/controlnet
+site_models:
+  base_path: /workspace/models
+  checkpoints: checkpoints
+  vae: vae
+  loras: loras
+  embeddings: embeddings
+  controlnet: controlnet

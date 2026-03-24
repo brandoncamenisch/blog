@@ -4,10 +4,12 @@ set -euo pipefail
 usage() {
   cat <<'EOF'
 Usage:
-  scripts/comfyui-site-images.sh <up|down|generate|generate-staged|install-hooks|pull-ollama-model> [targets...]
+  scripts/comfyui-site-images.sh <up|down|generate|generate-staged|preflight|preflight-staged|install-hooks|pull-ollama-model> [targets...]
 
 Examples:
   scripts/comfyui-site-images.sh install-hooks
+  scripts/comfyui-site-images.sh preflight landing
+  scripts/comfyui-site-images.sh preflight-staged
   scripts/comfyui-site-images.sh up
   scripts/comfyui-site-images.sh generate landing about
   scripts/comfyui-site-images.sh generate-staged
@@ -75,6 +77,23 @@ wait_for_ollama() {
   exit 1
 }
 
+preflight_generation() {
+  python3 "$python_script" \
+    --repo-root "$repo_root" \
+    --manifest "$manifest_file" \
+    --api-url "$comfyui_api_url" \
+    --ollama-url "$ollama_api_url" \
+    --preflight \
+    "$@"
+}
+
+capture_preflight_status() {
+  set +e
+  preflight_generation "$@"
+  preflight_status=$?
+  set -e
+}
+
 ensure_stack() {
   docker_compose_cmd -f "$compose_file" up -d ollama comfyui
   wait_for_ollama
@@ -108,7 +127,20 @@ case "$command" in
     ensure_stack
     docker_compose_cmd -f "$compose_file" exec -T ollama ollama pull "$(ollama_model)"
     ;;
+  preflight)
+    capture_preflight_status "$@"
+    [[ $preflight_status -eq 11 ]] && exit 0
+    exit "$preflight_status"
+    ;;
+  preflight-staged)
+    capture_preflight_status --targets-from-staged
+    [[ $preflight_status -eq 11 ]] && exit 0
+    exit "$preflight_status"
+    ;;
   generate)
+    capture_preflight_status "$@"
+    [[ $preflight_status -eq 11 ]] && exit 0
+    [[ $preflight_status -ne 0 ]] && exit "$preflight_status"
     ensure_stack
     python3 "$python_script" \
       --repo-root "$repo_root" \
@@ -118,6 +150,9 @@ case "$command" in
       "$@"
     ;;
   generate-staged)
+    capture_preflight_status --targets-from-staged
+    [[ $preflight_status -eq 11 ]] && exit 0
+    [[ $preflight_status -ne 0 ]] && exit "$preflight_status"
     ensure_stack
     python3 "$python_script" \
       --repo-root "$repo_root" \
