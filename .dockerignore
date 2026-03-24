@@ -1,0 +1,7 @@
+.git
+.astro
+dist
+node_modules
+infra/cloudflare/.terraform
+infra/cloudflare/*.tfstate
+infra/cloudflare/*.tfstate.*
