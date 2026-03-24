@@ -64,13 +64,24 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 				color: rgb(var(--accent-bright));
 				text-shadow: 0 0 10px rgba(var(--glow), 0.45);
 			}
+			.article-shell {
+				display: grid;
+				gap: 1rem;
+			}
+			.hero-image {
+				background: rgba(var(--surface), 0.86);
+				border: 1px solid rgba(var(--border), 0.35);
+				border-radius: 14px;
+				padding: 0.8rem;
+				box-shadow: var(--box-shadow);
+			}
 		</style>
 	</head>
 
 	<body>
 		<Header />
 		<main>
-			<article>
+			<article class="article-shell">
 				<div class="hero-image">
 					{heroImage && <Image width={1020} height={510} src={heroImage} alt="" />}
 				</div>

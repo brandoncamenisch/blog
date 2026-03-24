@@ -44,6 +44,19 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
           <li><span aria-hidden="true">󰍩</span> essays, retrospectives, and project updates</li>
         </ul>
       </section>
+
+      <section class="terminal-panel tmux-layout">
+        <div class="pane">
+          <p class="prompt">$ tmux list-panes</p>
+          <p><span class="accent">pane 0</span> :: active writing workspace</p>
+          <p><span class="accent">pane 1</span> :: rss + deploy pipeline</p>
+          <p><span class="accent">pane 2</span> :: drafts / future posts</p>
+        </div>
+        <div class="pane">
+          <p class="prompt">$ echo $STACK</p>
+          <p>astro · markdown · github-pages · opentofu · cloudflare</p>
+        </div>
+      </section>
     </main>
     <Footer />
   </body>
@@ -73,5 +86,25 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
     display: flex;
     gap: 0.7rem;
     align-items: center;
+  }
+  .tmux-layout {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 1rem;
+  }
+  .pane {
+    min-height: 100%;
+    padding: 1rem;
+    border: 1px solid rgba(var(--border), 0.25);
+    border-radius: 10px;
+    background: rgba(var(--surface-alt), 0.65);
+  }
+  .accent {
+    color: rgb(var(--accent-bright));
+  }
+  @media (max-width: 720px) {
+    .tmux-layout {
+      grid-template-columns: 1fr;
+    }
   }
 </style>

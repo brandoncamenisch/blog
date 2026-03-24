@@ -85,7 +85,12 @@ main {
   width: 840px;
   max-width: calc(100% - 2rem);
   margin: auto;
-  padding: 3em 1em;
+  padding: 0 1rem 0;
+  background: rgba(var(--surface), 0.96);
+  border-left: 1px solid rgba(var(--border), 0.48);
+  border-right: 1px solid rgba(var(--border), 0.48);
+  box-shadow: 0 0 42px rgba(var(--glow), 0.08);
+  min-height: 60vh;
 }
 
 h1,
@@ -217,6 +222,17 @@ hr {
   box-shadow: var(--box-shadow);
   padding: 1.4rem 1.5rem;
   margin-bottom: 1.4rem;
+  position: relative;
+}
+
+.terminal-panel::before {
+  content: '● ● ●';
+  position: absolute;
+  top: 0.6rem;
+  right: 1rem;
+  color: rgba(var(--muted), 0.6);
+  font-size: 0.72rem;
+  letter-spacing: 0.3rem;
 }
 
 .prompt {
@@ -226,6 +242,12 @@ hr {
   letter-spacing: 0.08em;
   font-size: 0.92rem;
   text-shadow: 0 0 12px rgba(var(--glow), 0.45);
+}
+
+.prompt::after {
+  content: '▊';
+  margin-left: 0.35rem;
+  animation: blink 1.2s steps(1) infinite;
 }
 
 .terminal-link {
@@ -238,4 +260,15 @@ hr {
   background: rgba(var(--surface-alt), 0.9);
   text-transform: uppercase;
   letter-spacing: 0.08em;
+}
+
+@keyframes blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  50.01%,
+  100% {
+    opacity: 0;
+  }
 }
