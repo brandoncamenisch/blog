@@ -55,6 +55,24 @@
       "sampler_name": "euler",
       "scheduler": "normal",
       "seed": 24032402
+    },
+    "launching-the-blog": {
+      "watch": [
+        "src/content/blog/welcome.md"
+      ],
+      "context": [
+        "src/content/blog/welcome.md"
+      ],
+      "output": "public/images/generated/launching-the-blog-terminal-banner.jpg",
+      "art_direction": "Create a wide hero image for a launch announcement post about bringing a new static technical blog online. Show a focused Linux publishing workspace with tmux-like pane structure, an editor or terminal-driven writing environment, subtle signs of deployment and first-boot momentum, and the feeling of a freshly initialized but already lived-in home-lab desk. The scene should feel optimistic, grounded, and technical rather than flashy.",
+      "negative_prompt_seed": "watermark, logo, signature, blurry, unreadable text, exaggerated sci-fi skyline, fantasy armor, glossy showroom, cluttered collage, oversaturated magenta, duplicated monitors, extra limbs, cartoon style",
+      "width": 1536,
+      "height": 864,
+      "steps": 28,
+      "cfg": 6.2,
+      "sampler_name": "euler",
+      "scheduler": "normal",
+      "seed": 24032403
     }
   }
 }

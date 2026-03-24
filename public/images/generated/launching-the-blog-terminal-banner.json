@@ -1,0 +1,22 @@
+{
+  "target": "launching-the-blog",
+  "prompt_id": "56132506-3eba-49e3-8fb4-1219a126680a",
+  "source_output": "comfyui/output/site/launching-the-blog_00001_.png",
+  "prompt": "A static Astro blog with a cyberpunk terminal and tmux-session aesthetic. Generate cinematic but believable scenes with dark charcoal and near-black backgrounds, green phosphor glow, restrained cyan highlights, subtle amber indicator lights, practical monitors, compact home-lab hardware, Linux workstation energy, and real-world desk scale. Favor moody contrast, atmospheric depth, scanline-like light texture, and disciplined composition. Avoid fantasy armor, exaggerated sci-fi cityscapes, excessive magenta, floating holograms, or anything that feels like game splash art. Never include readable text, logos, watermarks, UI overlays, or terminal screenshots with legible words. $",
+  "negative_prompt": "watermark, logo, signature, blurry, unreadable text, exaggerated sci-fi skyline, fantasy armor, glossy showroom, cluttered collage, oversaturated magenta, duplicated monitors, extra limbs, cartoon style, $ (not desired output)",
+  "ollama_model": "qwen2.5:7b-instruct",
+  "context_files": [
+    "src/components/Header.astro",
+    "src/components/Footer.astro",
+    "src/styles/global.css",
+    "src/consts.ts",
+    "src/content/blog/welcome.md"
+  ],
+  "width": 1536,
+  "height": 864,
+  "steps": 28,
+  "cfg": 6.2,
+  "sampler_name": "euler",
+  "scheduler": "normal",
+  "seed": 24032403
+}

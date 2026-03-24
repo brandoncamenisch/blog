@@ -1,7 +1,7 @@
 {
   "target": "landing",
-  "prompt_id": "d7022caf-2cdd-4bbe-8d0e-39caa94b23eb",
-  "source_output": "comfyui/output/site/landing_00004_.png",
+  "prompt_id": "bfa20822-a12d-4738-b94b-e9c3b9e1ea45",
+  "source_output": "comfyui/output/site/landing_00005_.png",
   "prompt": "A static Astro blog with a cyberpunk terminal and tmux-session aesthetic. Generate cinematic but believable scenes with dark charcoal and near-black backgrounds, green phosphor glow, restrained cyan highlights, subtle amber indicator lights, practical monitors, compact home-lab hardware, Linux workstation energy, and real-world desk scale. Favor moody contrast, atmospheric depth, scanline-like light texture, and disciplined composition. Avoid fantasy armor, exaggerated sci-fi cityscapes, excessive magenta, floating holograms, or anything that feels like game splash art. Never include readable text, logos, watermarks, UI overlays, or terminal screenshots with legible words. dark charcoal room, green phosphor glow on compact monitors and hardware, subtle cyan highlights on keyboard and mouse, amber indicator lights on devices, multiple practical displays arranged like tmux panes, calm operator-grade Linux desk with signs of writing and deployment workflow, scanline-like light texture, disciplined composition, cinematic but believable cyberpunk terminal aesthetic",
   "negative_prompt": "watermark, logo, signature, blurry, deformed, low contrast, oversaturated magenta, fantasy armor, neon city skyline, floating holograms, extra limbs, duplicated screens, unreadable text, glitch collage, anime face",
   "ollama_model": "qwen2.5:7b-instruct",

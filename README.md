@@ -83,6 +83,7 @@ Pre-commit behavior:
 
 - changing `src/pages/index.astro` regenerates the landing-page art
 - changing `src/pages/about.astro` regenerates the about-page art
+- changing `src/content/blog/welcome.md` regenerates the launch-post art
 - changing the ComfyUI manifest or generation scripts regenerates all site art
 
 Prompt generation behavior:

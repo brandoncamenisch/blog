@@ -131,9 +131,12 @@ const posts = (await getCollection('blog')).sort(
 										<span aria-hidden="true"></span>
 										<span>entry</span>
 									</div>
-									{post.data.heroImage && (
-										<Image width={720} height={360} src={post.data.heroImage} alt="" />
-									)}
+									{post.data.heroImage &&
+										(typeof post.data.heroImage === 'string' ? (
+											<img src={post.data.heroImage} alt="" loading="lazy" />
+										) : (
+											<Image width={720} height={360} src={post.data.heroImage} alt="" />
+										))}
 									<h4 class="title">{post.data.title}</h4>
 									<p class="date">
 										<FormattedDate date={post.data.pubDate} />

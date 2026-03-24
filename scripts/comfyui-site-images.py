@@ -165,15 +165,25 @@ def request_ollama_prompt(
         "improvement",
         "improvements",
         "$ cat",
+        "$",
         "src/pages",
+        "src/content",
         "file:",
         "code",
         "developer",
+        "not desired output",
     ]
 
     def is_visual_prompt(prompt: str, negative_prompt: str) -> bool:
         haystacks = [prompt.lower(), negative_prompt.lower()]
-        return not any(fragment in haystack for haystack in haystacks for fragment in disallowed_fragments)
+        if any(fragment in haystack for haystack in haystacks for fragment in disallowed_fragments):
+            return False
+
+        prompt_words = [word for word in prompt.replace(",", " ").split() if any(ch.isalpha() for ch in word)]
+        if len(prompt_words) < 8:
+            return False
+
+        return True
 
     response_schema = {
         "type": "object",
@@ -204,7 +214,8 @@ def request_ollama_prompt(
         f"Target art direction:\n{art_direction}\n\n"
         f"Negative prompt seed:\n{negative_prompt_seed}\n\n"
         "Return only concrete visual details: environment, objects, lighting, mood, framing, and composition. "
-        "Do not mention websites, source files, Astro, CSS, accessibility, developer workflows, or suggested improvements."
+        "Do not mention websites, source files, Astro, CSS, accessibility, developer workflows, or suggested improvements. "
+        'Aim for output like: {"prompt":"quiet Linux writing desk, compact rack gear, multiple pane-like monitors, moody green phosphor glow, cinematic contrast, first-night launch energy","negative_prompt":"blurry, text, watermark, duplicate monitors"}'
     )
     payloads = [
         {
