@@ -3,9 +3,16 @@ title: 'Launching the blog'
 description: 'The first post on the new static blog for blog.brandoncamenisch.com.'
 pubDate: 'Mar 24 2026'
 generatedHeroImage: '/images/generated/launching-the-blog-terminal-banner.jpg'
+generatedImages:
+  - id: first-night-rack
+    alt: 'AI-generated first-night publishing workspace with a Linux desk, compact lab gear, and pane-like monitors.'
+    caption: 'A supporting insert image for the launch post: a first-night publishing desk with calm tmux-like monitor layouts and fresh deployment energy.'
+    brief: 'Create a supporting in-article image for the first post that feels like the blog has just been brought online: quiet Linux writing desk, compact rack gear, pane-like monitors, first-night deployment energy, and grounded optimism.'
 ---
 
 Welcome to the new blog.
+
+[[generated-image:first-night-rack]]
 
 This site is intentionally simple:
 

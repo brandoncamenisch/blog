@@ -94,6 +94,34 @@ Prompt generation behavior:
 - the generated prompt is blended with the repo’s shared terminal/tmux art direction so the
   imagery stays visually consistent across pages
 
+In-article generated images:
+
+- blog posts can declare generated article images in frontmatter with `generatedImages`
+- each entry should include:
+  - `id`: stable kebab-case identifier
+  - `alt`: alt text used in rendered HTML
+  - `caption`: optional visible caption
+  - `brief`: the post-specific visual intent that Ollama should blend with the global theme
+- place `[[generated-image:your-id]]` on its own line in the markdown body where the image should appear
+- generated article images render to `/images/generated/posts/<post-slug>/<image-id>.jpg`
+
+Example:
+
+```md
+---
+title: 'Launching the blog'
+generatedImages:
+  - id: first-night-rack
+    alt: 'AI-generated Linux publishing desk with compact rack gear.'
+    caption: 'First-night publishing workspace after the launch.'
+    brief: 'Quiet Linux writing desk, pane-like monitors, fresh deployment energy.'
+---
+
+Intro paragraph.
+
+[[generated-image:first-night-rack]]
+```
+
 Running on another machine:
 
 - if this machine is too light for image generation, run the same repo on a stronger Linux box
