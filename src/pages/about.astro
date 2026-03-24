@@ -1,13 +1,13 @@
 ---
-import AboutHeroImage from '../assets/blog-placeholder-about.jpg';
 import Layout from '../layouts/BlogPost.astro';
+import { ABOUT_HERO_IMAGE } from '../consts';
 ---
 
 <Layout
   title="About"
   description="About Brandon Camenisch and this blog."
   pubDate={new Date('March 24 2026')}
-  heroImage={AboutHeroImage}
+  heroImage={ABOUT_HERO_IMAGE}
 >
   <p class="prompt">$ cat about.txt</p>
   <p>
@@ -24,5 +24,10 @@ import Layout from '../layouts/BlogPost.astro';
   <p>
     Because the site is static and repo-backed, it’s easy to keep under version control, review
     changes carefully, and publish to GitHub Pages with minimal moving parts.
+  </p>
+
+  <p>
+    The hero art on this page is generated ahead of time through a Dockerized ComfyUI workflow and
+    committed with the rest of the site so production stays static and predictable.
   </p>
 </Layout>

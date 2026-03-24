@@ -1,0 +1,10 @@
+checkpoints:
+  - /workspace/models/checkpoints
+vae:
+  - /workspace/models/vae
+loras:
+  - /workspace/models/loras
+embeddings:
+  - /workspace/models/embeddings
+controlnet:
+  - /workspace/models/controlnet

@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo_root="$(git rev-parse --show-toplevel)"
+cd "$repo_root"
+
+if [[ ! -x ./scripts/comfyui-site-images.sh ]]; then
+  echo "error: missing ComfyUI image generation helper" >&2
+  exit 1
+fi
+
+./scripts/comfyui-site-images.sh generate-staged
+
+git add public/images/generated

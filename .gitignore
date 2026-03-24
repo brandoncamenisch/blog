@@ -5,6 +5,8 @@ dist/
 
 # dependencies
 node_modules/
+__pycache__/
+*.pyc
 
 # logs
 npm-debug.log*
@@ -34,3 +36,15 @@ override.tf
 override.tf.json
 *_override.tf
 *_override.tf.json
+
+# ComfyUI local runtime state
+comfyui/models/*
+comfyui/input/*
+comfyui/output/*
+comfyui/ollama/*
+!comfyui/models/.gitkeep
+!comfyui/models/checkpoints/
+!comfyui/models/checkpoints/.gitkeep
+!comfyui/input/.gitkeep
+!comfyui/output/.gitkeep
+!comfyui/ollama/.gitkeep

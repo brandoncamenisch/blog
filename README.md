@@ -22,6 +22,70 @@ npm run dev
 npm run build
 ```
 
+## ComfyUI site imagery
+
+The site ships generated images as static assets committed under
+`public/images/generated/`. They are not generated at page load.
+
+Instead, the blog repo includes a Dockerized ComfyUI pipeline that regenerates
+those assets before commit when the staged source pages that use them change.
+
+Tracked pieces:
+
+- `comfyui/` contains the Docker build, model-path config, and prompt manifest
+- `comfyui/docker-compose.yml` also defines a local Ollama service for prompt synthesis
+- `scripts/comfyui-site-images.sh` starts ComfyUI and renders site art
+- `scripts/comfyui-site-images.py` reads surrounding page/theme context, asks Ollama for a
+  theme-consistent prompt, submits the ComfyUI graph, and copies outputs into
+  `public/images/generated/`
+- `.githooks/pre-commit` regenerates affected images and re-stages them
+
+One-time setup:
+
+```bash
+./scripts/comfyui-site-images.sh install-hooks
+```
+
+Place a compatible checkpoint in:
+
+```bash
+comfyui/models/checkpoints/
+```
+
+The default prompt manifest expects `sd_xl_base_1.0.safetensors`, but you can
+change that in `comfyui/site-images.json`.
+
+Pull the Ollama prompt model once:
+
+```bash
+./scripts/comfyui-site-images.sh pull-ollama-model
+```
+
+Manual usage:
+
+```bash
+./scripts/comfyui-site-images.sh up
+./scripts/comfyui-site-images.sh generate landing about
+./scripts/comfyui-site-images.sh down
+```
+
+Pre-commit behavior:
+
+- changing `src/pages/index.astro` regenerates the landing-page art
+- changing `src/pages/about.astro` regenerates the about-page art
+- changing the ComfyUI manifest or generation scripts regenerates all site art
+
+Prompt generation behavior:
+
+- the hook collects the staged page content plus shared theme files like
+  `src/styles/global.css`, `src/components/Header.astro`, and `src/components/Footer.astro`
+- Ollama turns that surrounding context into a page-specific prompt
+- the generated prompt is blended with the repo’s shared terminal/tmux art direction so the
+  imagery stays visually consistent across pages
+
+Generated assets are committed so GitHub Pages serves them as normal static
+files.
+
 ## Deployment
 
 Deployments run through GitHub Actions and publish to GitHub Pages.
