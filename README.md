@@ -83,6 +83,16 @@ Prompt generation behavior:
 - the generated prompt is blended with the repo’s shared terminal/tmux art direction so the
   imagery stays visually consistent across pages
 
+Running on another machine:
+
+- if this machine is too light for image generation, run the same repo on a stronger Linux box
+- the scripts already respect `COMFYUI_API_URL` and `OLLAMA_API_URL`, so you can point the repo
+  at remote services instead of local containers if needed
+- if you need to commit prompt/config changes from a lightweight machine without generating images
+  there, use `COMFYUI_SKIP_GENERATION=1 git commit ...`, then regenerate on the stronger machine
+- after generation, commit the refreshed `public/images/generated/` assets back into the repo as
+  usual
+
 Generated assets are committed so GitHub Pages serves them as normal static
 files.
 

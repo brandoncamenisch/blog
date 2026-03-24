@@ -2,7 +2,7 @@
   "default_model": "sd_xl_base_1.0.safetensors",
   "prompt_generation": {
     "ollama_model": "qwen2.5:7b-instruct",
-    "theme_brief": "A static Astro blog with a cyberpunk terminal and tmux-session aesthetic. Keep images cinematic but grounded, with dark backgrounds, green phosphor glow, cyan accents, practical monitors, home-lab hardware, Linux workstation energy, and no text overlays.",
+    "theme_brief": "A static Astro blog with a cyberpunk terminal and tmux-session aesthetic. Generate cinematic but believable scenes with dark charcoal and near-black backgrounds, green phosphor glow, restrained cyan highlights, subtle amber indicator lights, practical monitors, compact home-lab hardware, Linux workstation energy, and real-world desk scale. Favor moody contrast, atmospheric depth, scanline-like light texture, and disciplined composition. Avoid fantasy armor, exaggerated sci-fi cityscapes, excessive magenta, floating holograms, or anything that feels like game splash art. Never include readable text, logos, watermarks, UI overlays, or terminal screenshots with legible words.",
     "shared_context": [
       "src/components/Header.astro",
       "src/components/Footer.astro",
@@ -28,8 +28,8 @@
         "src/pages/index.astro"
       ],
       "output": "public/images/generated/landing-terminal-banner.jpg",
-      "art_direction": "Create a wide launch image for the blog homepage that feels like booting into a personal matrix/tmux publishing environment.",
-      "negative_prompt_seed": "watermark, logo, signature, blurry, deformed, low contrast, extra limbs, duplicated screens, unreadable text",
+      "art_direction": "Create a wide launch image for the homepage that feels like booting into a personal publishing environment. Show an operator-grade Linux desk or control surface with multiple practical displays arranged like tmux panes, subtle signs of writing and deployment workflow, and a sense of calm readiness instead of chaos. The image should feel like the front door to a technical notebook and should read well as a site hero banner.",
+      "negative_prompt_seed": "watermark, logo, signature, blurry, deformed, low contrast, oversaturated magenta, fantasy armor, neon city skyline, floating holograms, extra limbs, duplicated screens, unreadable text, glitch collage, anime face",
       "width": 1536,
       "height": 864,
       "steps": 28,
@@ -46,12 +46,12 @@
         "src/pages/about.astro"
       ],
       "output": "public/images/generated/about-terminal-banner.jpg",
-      "art_direction": "Create a wide about-page image that feels personal, technical, and consistent with a neon Linux home-lab terminal workspace.",
-      "negative_prompt_seed": "watermark, logo, signature, blurry, deformed hands, duplicated face, extra arms, unreadable text, low detail",
+      "art_direction": "Create a wide about-page image that feels personal, technical, and quietly focused. Suggest a real builder's environment: a Linux workstation, cables, compact servers or lab gear, notebooks or tools, and monitors glowing with abstract pane-like layouts. If a person appears, keep them grounded and secondary to the workspace, with no heroic pose. The mood should support an about page for someone publishing research notes, automation work, and system design ideas.",
+      "negative_prompt_seed": "watermark, logo, signature, blurry, deformed hands, duplicated face, extra arms, unreadable text, low detail, superhero pose, giant cityscape, excessive purple haze, cartoon rendering, glossy CGI showroom",
       "width": 1536,
       "height": 864,
       "steps": 28,
-      "cfg": 6.0,
+      "cfg": 6.5,
       "sampler_name": "euler",
       "scheduler": "normal",
       "seed": 24032402
