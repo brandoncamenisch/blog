@@ -125,17 +125,20 @@ const posts = (await getCollection('blog')).sort(
 				<ul>
 					{
 						posts.map((post) => (
+							(() => {
+								const heroImage = post.data.generatedHeroImage ?? post.data.heroImage;
+								return (
 							<li>
 								<a href={`/blog/${post.id}/`}>
 									<div class="post-label">
 										<span aria-hidden="true"></span>
 										<span>entry</span>
 									</div>
-									{post.data.heroImage &&
-										(typeof post.data.heroImage === 'string' ? (
-											<img src={post.data.heroImage} alt="" loading="lazy" />
+									{heroImage &&
+										(typeof heroImage === 'string' ? (
+											<img src={heroImage} alt="" loading="lazy" />
 										) : (
-											<Image width={720} height={360} src={post.data.heroImage} alt="" />
+											<Image width={720} height={360} src={heroImage} alt="" />
 										))}
 									<h4 class="title">{post.data.title}</h4>
 									<p class="date">
@@ -143,6 +146,8 @@ const posts = (await getCollection('blog')).sort(
 									</p>
 								</a>
 							</li>
+								);
+							})()
 						))
 					}
 				</ul>

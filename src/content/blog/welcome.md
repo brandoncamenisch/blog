@@ -2,7 +2,7 @@
 title: 'Launching the blog'
 description: 'The first post on the new static blog for blog.brandoncamenisch.com.'
 pubDate: 'Mar 24 2026'
-heroImage: '/images/generated/launching-the-blog-terminal-banner.jpg'
+generatedHeroImage: '/images/generated/launching-the-blog-terminal-banner.jpg'
 ---
 
 Welcome to the new blog.
