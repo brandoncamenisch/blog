@@ -5,7 +5,7 @@ locals {
 resource "cloudflare_record" "blog_pages" {
   zone_id = var.cloudflare_zone_id
   name    = var.blog_subdomain
-  value   = var.blog_target
+  content = var.blog_target
   type    = "CNAME"
   ttl     = 1
   proxied = var.proxied
