@@ -52,6 +52,9 @@ Place a compatible checkpoint in:
 comfyui/models/checkpoints/
 ```
 
+The ComfyUI container is configured to request GPU access, so local Docker needs
+working NVIDIA runtime support when you want real image generation speed.
+
 The default prompt manifest expects `sd_xl_base_1.0.safetensors`, but you can
 change that in `comfyui/site-images.json`.
 
@@ -64,10 +67,17 @@ Pull the Ollama prompt model once:
 Manual usage:
 
 ```bash
+./scripts/comfyui-site-images.sh preflight landing
+./scripts/comfyui-site-images.sh preflight-staged
 ./scripts/comfyui-site-images.sh up
 ./scripts/comfyui-site-images.sh generate landing about
 ./scripts/comfyui-site-images.sh down
 ```
+
+The `preflight` commands validate target selection, required checkpoint files, and
+referenced page/theme context without starting Docker. `generate-staged` also runs
+that preflight first now, so commits that do not touch watched files can skip the
+ComfyUI/Ollama startup path entirely.
 
 Pre-commit behavior:
 

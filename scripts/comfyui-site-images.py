@@ -27,6 +27,11 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Resolve targets from staged Git paths instead of explicit target names.",
     )
+    parser.add_argument(
+        "--preflight",
+        action="store_true",
+        help="Validate local inputs and target resolution without contacting ComfyUI or Ollama.",
+    )
     return parser.parse_args()
 
 
@@ -81,6 +86,30 @@ def ensure_model_exists(repo_root: Path, model_name: str) -> None:
         )
 
 
+def collect_validation_errors(repo_root: Path, manifest: dict, targets: list[str]) -> list[str]:
+    errors: list[str] = []
+
+    for target_name in targets:
+        config = manifest["targets"][target_name]
+        model_name = config.get("model", manifest["default_model"])
+        model_path = repo_root / "comfyui" / "models" / "checkpoints" / model_name
+        if not model_path.exists():
+            errors.append(
+                f"missing checkpoint {model_name!r} at {model_path}. "
+                "Place the model in comfyui/models/checkpoints/ before generating imagery."
+            )
+
+        context_paths = list(manifest["prompt_generation"].get("shared_context", [])) + list(
+            config.get("context", [])
+        )
+        for relative_path in context_paths:
+            absolute_path = repo_root / relative_path
+            if not absolute_path.exists():
+                errors.append(f"missing context file for {target_name}: {relative_path}")
+
+    return errors
+
+
 def request_json(url: str, payload: dict) -> dict:
     request = urllib.request.Request(
         url,
@@ -88,7 +117,28 @@ def request_json(url: str, payload: dict) -> dict:
         headers={"Content-Type": "application/json"},
     )
     with urllib.request.urlopen(request, timeout=120) as response:
-        return json.load(response)
+        raw = response.read().decode("utf-8")
+
+    try:
+        return json.loads(raw)
+    except json.JSONDecodeError:
+        chunks: list[dict] = []
+        for line in raw.splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            chunks.append(json.loads(line))
+
+        if not chunks:
+            raise ValueError(f"empty JSON response from {url}")
+
+        if len(chunks) == 1:
+            return chunks[0]
+
+        merged = dict(chunks[-1])
+        if any("response" in chunk for chunk in chunks):
+            merged["response"] = "".join(chunk.get("response", "") for chunk in chunks)
+        return merged
 
 
 def fetch_json(url: str) -> dict:
@@ -104,10 +154,42 @@ def request_ollama_prompt(
     art_direction: str,
     negative_prompt_seed: str,
 ) -> dict:
+    disallowed_fragments = [
+        "astro project",
+        "your project",
+        "suggestion",
+        "suggestions",
+        "accessibility",
+        "css",
+        "link target",
+        "improvement",
+        "improvements",
+        "$ cat",
+        "src/pages",
+        "file:",
+        "code",
+        "developer",
+    ]
+
+    def is_visual_prompt(prompt: str, negative_prompt: str) -> bool:
+        haystacks = [prompt.lower(), negative_prompt.lower()]
+        return not any(fragment in haystack for haystack in haystacks for fragment in disallowed_fragments)
+
+    response_schema = {
+        "type": "object",
+        "properties": {
+            "prompt": {"type": "string"},
+            "negative_prompt": {"type": "string"},
+        },
+        "required": ["prompt", "negative_prompt"],
+        "additionalProperties": False,
+    }
     system_prompt = (
         "You create concise, production-ready image prompts for ComfyUI text-to-image generation. "
         "Return strict JSON with exactly two string keys: prompt and negative_prompt. "
         "Keep the visual language cohesive with the provided theme brief. "
+        "Describe only visual scene content, composition, lighting, and mood. "
+        "Never critique the source material, mention files, quote code, or suggest website improvements. "
         "Do not include markdown, code fences, or commentary."
     )
     user_prompt = (
@@ -116,19 +198,55 @@ def request_ollama_prompt(
         f"Negative prompt seed:\n{negative_prompt_seed}\n\n"
         f"Relevant page and theme context:\n{context_block}\n"
     )
-    payload = {
-        "model": model_name,
-        "system": system_prompt,
-        "prompt": user_prompt,
-        "stream": False,
-        "format": "json",
-    }
-    response = request_json(f"{ollama_url.rstrip('/')}/api/generate", payload)
-    content = json.loads(response["response"])
-    return {
-        "prompt": content["prompt"],
-        "negative_prompt": content["negative_prompt"],
-    }
+    fallback_user_prompt = (
+        "Create a single visual scene prompt for a website hero image.\n\n"
+        f"Theme brief:\n{theme_brief}\n\n"
+        f"Target art direction:\n{art_direction}\n\n"
+        f"Negative prompt seed:\n{negative_prompt_seed}\n\n"
+        "Return only concrete visual details: environment, objects, lighting, mood, framing, and composition. "
+        "Do not mention websites, source files, Astro, CSS, accessibility, developer workflows, or suggested improvements."
+    )
+    payloads = [
+        {
+            "model": model_name,
+            "system": system_prompt,
+            "prompt": user_prompt,
+            "stream": False,
+            "format": response_schema,
+            "options": {"temperature": 0.2, "num_predict": 384},
+        },
+        {
+            "model": model_name,
+            "system": (
+                f"{system_prompt} Respond with a single JSON object only. "
+                'Example: {"prompt":"moody terminal workspace, cinematic lighting","negative_prompt":"blurry, text, watermark"}'
+            ),
+            "prompt": fallback_user_prompt,
+            "stream": False,
+            "format": response_schema,
+            "options": {"temperature": 0.1, "num_predict": 256},
+        },
+    ]
+
+    last_error: Exception | None = None
+    for payload in payloads:
+        try:
+            response = request_json(f"{ollama_url.rstrip('/')}/api/generate", payload)
+            content = json.loads(response["response"])
+            prompt = content["prompt"].strip()
+            negative_prompt = content["negative_prompt"].strip()
+            if not prompt or not negative_prompt:
+                raise ValueError("Ollama returned empty prompt fields")
+            if not is_visual_prompt(prompt, negative_prompt):
+                raise ValueError("Ollama returned non-visual prompt content")
+            return {
+                "prompt": prompt,
+                "negative_prompt": negative_prompt,
+            }
+        except (json.JSONDecodeError, KeyError, TypeError, ValueError) as exc:
+            last_error = exc
+
+    raise ValueError(f"ollama returned invalid prompt JSON: {last_error}")
 
 
 def read_context_excerpt(
@@ -214,6 +332,24 @@ def build_prompt_graph(
     }
 
 
+def merge_negative_prompt_parts(seed: str, generated: str) -> str:
+    parts: list[str] = []
+    seen: set[str] = set()
+
+    for chunk in (seed, generated):
+        for part in chunk.split(","):
+            normalized = " ".join(part.split()).strip()
+            if not normalized:
+                continue
+            lowered = normalized.lower()
+            if lowered in seen:
+                continue
+            seen.add(lowered)
+            parts.append(normalized)
+
+    return ", ".join(parts)
+
+
 def wait_for_output(api_url: str, prompt_id: str) -> dict:
     history_url = f"{api_url.rstrip('/')}/history/{prompt_id}"
     for _ in range(180):
@@ -294,7 +430,9 @@ def render_target(
     )
 
     positive_prompt = f'{prompt_generation["theme_brief"]} {prompt_bundle["prompt"]}'
-    negative_prompt = f'{config["negative_prompt_seed"]}, {prompt_bundle["negative_prompt"]}'
+    negative_prompt = merge_negative_prompt_parts(
+        config["negative_prompt_seed"], prompt_bundle["negative_prompt"]
+    )
     prompt_graph = build_prompt_graph(
         config,
         model_name,
@@ -341,9 +479,29 @@ def main() -> int:
     if unknown:
         raise ValueError(f"unknown targets requested: {', '.join(unknown)}")
 
+    validation_errors = collect_validation_errors(repo_root, manifest, targets)
+
+    if args.preflight:
+        if not targets:
+            print("no staged changes require ComfyUI image regeneration", file=sys.stderr)
+            return 11
+
+        if validation_errors:
+            for error in validation_errors:
+                print(f"error: {error}", file=sys.stderr)
+            return 10
+
+        print(f"preflight ok for targets: {', '.join(targets)}", file=sys.stderr)
+        return 0
+
     if not targets:
         print("no staged changes require ComfyUI image regeneration", file=sys.stderr)
         return 0
+
+    if validation_errors:
+        for error in validation_errors:
+            print(f"error: {error}", file=sys.stderr)
+        return 1
 
     for target_name in targets:
         render_target(

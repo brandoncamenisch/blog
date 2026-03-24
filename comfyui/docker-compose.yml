@@ -9,6 +9,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    gpus: all
     ports:
       - "127.0.0.1:8188:8188"
     volumes:

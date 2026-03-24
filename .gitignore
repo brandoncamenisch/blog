@@ -39,6 +39,7 @@ override.tf.json
 
 # ComfyUI local runtime state
 comfyui/models/*
+comfyui/models/checkpoints/*
 comfyui/input/*
 comfyui/output/*
 comfyui/ollama/*
