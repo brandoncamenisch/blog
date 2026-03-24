@@ -13,25 +13,65 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
   <body>
     <Header />
     <main>
-      <h1>Notes from Brandon Camenisch</h1>
-      <p>
-        This is the publishing home for <a href="/blog">posts</a>, experiments, and longer
-        writeups from Brandon Camenisch. The site is built with <a href="https://astro.build/">Astro</a>
-        and deployed as a static site on GitHub Pages at <code>blog.brandoncamenisch.com</code>.
-      </p>
-      <p>
-        The goal is to keep the stack lightweight, portable, and easy to version. Posts live in
-        <code>src/content/blog/</code>, and every deploy is reproducible from code.
-      </p>
-      <p>Expect the content here to grow into a mix of:</p>
-      <ul>
-        <li>security research and debugging notes</li>
-        <li>homelab and automation writeups</li>
-        <li>development workflow experiments</li>
-        <li>personal essays and project updates</li>
-      </ul>
-      <p>If you want the feed, the site also publishes <a href="/rss.xml">RSS</a>.</p>
+      <section class="terminal-panel hero">
+        <p class="prompt">$ whoami</p>
+        <h1>Brandon Camenisch // matrix log</h1>
+        <p class="lede">
+          A cyberpunk-flavored terminal for security notes, Linux automation, homelab experiments,
+          and long-form project writeups.
+        </p>
+        <div class="hero-actions">
+          <a class="terminal-link" href="/blog"><span aria-hidden="true"></span> open /blog</a>
+          <a class="terminal-link" href="/rss.xml"><span aria-hidden="true"></span> subscribe /rss.xml</a>
+        </div>
+      </section>
+
+      <section class="terminal-panel">
+        <p class="prompt">$ cat mission.txt</p>
+        <p>
+          This site is built with <a href="https://astro.build/">Astro</a>, versioned in Git, and
+          deployed to GitHub Pages. Posts live in <code>src/content/blog/</code>, and the whole
+          publishing stack stays reproducible from code.
+        </p>
+      </section>
+
+      <section class="terminal-panel">
+        <p class="prompt">$ ls content/</p>
+        <ul class="feature-list">
+          <li><span aria-hidden="true"></span> security research and debugging notes</li>
+          <li><span aria-hidden="true">󰒓</span> homelab and automation writeups</li>
+          <li><span aria-hidden="true">󰛦</span> developer workflow experiments</li>
+          <li><span aria-hidden="true">󰍩</span> essays, retrospectives, and project updates</li>
+        </ul>
+      </section>
     </main>
     <Footer />
   </body>
 </html>
+
+<style>
+  .hero {
+    margin-bottom: 2rem;
+  }
+  .lede {
+    font-size: 1.15rem;
+  }
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+  .feature-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.8rem;
+  }
+  .feature-list li {
+    display: flex;
+    gap: 0.7rem;
+    align-items: center;
+  }
+</style>

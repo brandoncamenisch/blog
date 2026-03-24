@@ -33,24 +33,36 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 				width: 720px;
 				max-width: calc(100% - 2em);
 				margin: auto;
-				padding: 1em;
-				color: rgb(var(--gray-dark));
+				padding: 1.5em;
+				color: rgb(var(--text));
+				background: rgba(var(--surface), 0.9);
+				border: 1px solid rgba(var(--border), 0.35);
+				border-radius: 14px;
+				box-shadow: var(--box-shadow);
 			}
 			.title {
 				margin-bottom: 1em;
 				padding: 1em 0;
-				text-align: center;
-				line-height: 1;
+				line-height: 1.2;
 			}
 			.title h1 {
 				margin: 0 0 0.5em 0;
+				text-transform: uppercase;
+				letter-spacing: 0.06em;
 			}
 			.date {
 				margin-bottom: 0.5em;
-				color: rgb(var(--gray));
+				color: rgb(var(--muted));
+				text-transform: uppercase;
+				letter-spacing: 0.08em;
+				font-size: 0.9rem;
 			}
 			.last-updated-on {
 				font-style: italic;
+			}
+			.prompt {
+				color: rgb(var(--accent-bright));
+				text-shadow: 0 0 10px rgba(var(--glow), 0.45);
 			}
 		</style>
 	</head>
@@ -64,6 +76,7 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 				</div>
 				<div class="prose">
 					<div class="title">
+						<p class="prompt">$ cat post/{title.toLowerCase().replaceAll(' ', '-')}.md</p>
 						<div class="date">
 							<FormattedDate date={pubDate} />
 							{
