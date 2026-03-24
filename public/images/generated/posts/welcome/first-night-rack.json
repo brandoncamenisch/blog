@@ -1,16 +1,15 @@
 {
   "target": "article-welcome-first-night-rack",
-  "prompt_id": "c7513c2c-eb3d-4d6d-a528-2070e83f86cf",
-  "source_output": "comfyui/output/site/article-welcome-first-night-rack_00002_.png",
-  "prompt": "A static Astro blog with a cyberpunk terminal and tmux-session aesthetic. Generate cinematic but believable scenes with dark charcoal and near-black backgrounds, green phosphor glow, restrained cyan highlights, subtle amber indicator lights, practical monitors, compact home-lab hardware, Linux workstation energy, and real-world desk scale. Favor moody contrast, atmospheric depth, scanline-like light texture, and disciplined composition. Avoid fantasy armor, exaggerated sci-fi cityscapes, excessive magenta, floating holograms, or anything that feels like game splash art. Never include readable text, logos, watermarks, UI overlays, or terminal screenshots with legible words. Welcome to the new blog. Here's a brief summary of what you've read so far:",
-  "negative_prompt": "watermark, logo, signature, blurry, unreadable text, fantasy armor, exaggerated skyline, floating holograms, cluttered collage, duplicate monitors, extra limbs, cartoon rendering, glossy CGI showroom, Do not include any additional text beyond this summary.",
+  "prompt_id": "c4c3d7aa-268a-4eda-85bb-306ca343d9f3",
+  "source_output": "comfyui/output/site/article-welcome-first-night-rack_00004_.png",
+  "prompt": "A static Astro blog with a cyberpunk terminal and tmux-session aesthetic. Generate cinematic but believable scenes with dark charcoal and near-black backgrounds, green phosphor glow, restrained cyan highlights, subtle amber indicator lights, practical monitors, compact home-lab hardware, Linux workstation energy, and real-world desk scale. Favor moody contrast, atmospheric depth, scanline-like light texture, and disciplined composition. Avoid fantasy armor, exaggerated sci-fi cityscapes, excessive magenta, floating holograms, or anything that feels like game splash art. Never include readable text, logos, watermarks, UI overlays, or terminal screenshots with legible words. quiet Linux writing desk, compact rack gear, multiple pane-like monitors, moody green phosphor glow, cinematic contrast, first-night launch energy",
+  "negative_prompt": "watermark, logo, signature, blurry, unreadable text, fantasy armor, exaggerated skyline, floating holograms, cluttered collage, duplicate monitors, extra limbs, cartoon rendering, glossy CGI showroom, text",
   "ollama_model": "qwen2.5:7b-instruct",
   "context_files": [
     "src/components/Header.astro",
     "src/components/Footer.astro",
     "src/styles/global.css",
-    "src/consts.ts",
-    "src/content/blog/welcome.md"
+    "src/consts.ts"
   ],
   "width": 1344,
   "height": 768,

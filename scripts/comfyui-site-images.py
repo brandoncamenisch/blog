@@ -53,6 +53,38 @@ def read_frontmatter(text: str, source: str) -> dict:
     raise ValueError(f"unterminated frontmatter in {source}")
 
 
+def strip_frontmatter(text: str) -> str:
+    lines = text.splitlines()
+    if not lines or lines[0].strip() != "---":
+        return text
+
+    for index in range(1, len(lines)):
+        if lines[index].strip() == "---":
+            return "\n".join(lines[index + 1 :])
+
+    return text
+
+
+def clean_markdown_excerpt(text: str, limit: int = 900) -> str:
+    body = strip_frontmatter(text)
+    cleaned_lines: list[str] = []
+    for raw_line in body.splitlines():
+        line = raw_line.strip()
+        if not line:
+            continue
+        if line.startswith("[[generated-image:"):
+            continue
+        if line.startswith("```"):
+            continue
+        if line.startswith("#"):
+            line = line.lstrip("#").strip()
+        if line.startswith("- "):
+            line = line[2:].strip()
+        cleaned_lines.append(line)
+
+    return shorten(" ".join(cleaned_lines), width=limit, placeholder=" ...")
+
+
 def blog_slug_from_path(relative_path: str) -> str:
     if not relative_path.startswith("src/content/blog/"):
         raise ValueError(f"unsupported blog content path: {relative_path}")
@@ -82,6 +114,15 @@ def load_blog_frontmatter(
     return read_frontmatter((repo_root / relative_path).read_text(encoding="utf-8"), relative_path)
 
 
+def load_blog_source_text(repo_root: Path, relative_path: str, staged_changed_paths: set[str]) -> str:
+    if relative_path in staged_changed_paths:
+        staged_content = staged_file_content(repo_root, relative_path)
+        if staged_content is not None:
+            return staged_content
+
+    return (repo_root / relative_path).read_text(encoding="utf-8")
+
+
 def expand_article_image_targets(
     repo_root: Path, manifest: dict, staged_changed_paths: set[str]
 ) -> dict:
@@ -98,12 +139,15 @@ def expand_article_image_targets(
 
         relative_path = path.relative_to(repo_root).as_posix()
         frontmatter = load_blog_frontmatter(repo_root, relative_path, staged_changed_paths)
+        source_text = load_blog_source_text(repo_root, relative_path, staged_changed_paths)
         generated_images = frontmatter.get("generatedImages") or []
         if not isinstance(generated_images, list):
             raise ValueError(f"generatedImages in {relative_path} must be a list")
 
         slug = blog_slug_from_path(relative_path)
         title = str(frontmatter.get("title", slug)).strip()
+        description = str(frontmatter.get("description", "")).strip()
+        body_excerpt = clean_markdown_excerpt(source_text)
 
         for image in generated_images:
             if not isinstance(image, dict):
@@ -128,7 +172,7 @@ def expand_article_image_targets(
 
             targets[article_target_name(slug, image_id)] = {
                 "watch": [relative_path],
-                "context": [relative_path],
+                "context": [],
                 "output": generated_article_output(slug, image_id),
                 "art_direction": " ".join(art_direction_parts),
                 "negative_prompt_seed": article_defaults["negative_prompt_seed"],
@@ -139,6 +183,15 @@ def expand_article_image_targets(
                 "sampler_name": article_defaults["sampler_name"],
                 "scheduler": article_defaults["scheduler"],
                 "seed": article_seed(slug, image_id),
+                "subject_mode": "article",
+                "subject_context": {
+                    "title": title,
+                    "description": description,
+                    "brief": brief,
+                    "caption": caption,
+                    "alt": alt,
+                    "body_excerpt": body_excerpt,
+                },
             }
 
     return {
@@ -267,6 +320,8 @@ def request_ollama_prompt(
     context_block: str,
     art_direction: str,
     negative_prompt_seed: str,
+    subject_mode: str = "page",
+    subject_context: dict | None = None,
 ) -> dict:
     disallowed_fragments = [
         "astro project",
@@ -286,11 +341,60 @@ def request_ollama_prompt(
         "code",
         "developer",
         "not desired output",
+        "summary",
+        "read so far",
+        "you've read",
+        "blog post",
+        "placeholder",
+        "platform setup",
+        "additional text",
+        "what would you like",
+        "provided files",
+        "do with these files",
     ]
+
+    def normalize_phrase(value: str) -> str:
+        cleaned = " ".join(value.replace("\n", " ").split()).strip(" .,;:-")
+        return cleaned
+
+    def fallback_prompt_bundle() -> dict:
+        brief = normalize_phrase(str(subject_context.get("brief", "")))
+        caption = normalize_phrase(str(subject_context.get("caption", "")))
+        description = normalize_phrase(str(subject_context.get("description", "")))
+        body_excerpt = normalize_phrase(str(subject_context.get("body_excerpt", "")))
+
+        prompt_parts = []
+        for part in (brief, caption, description):
+            if part:
+                prompt_parts.append(part)
+
+        if subject_mode == "article":
+            prompt_parts.extend(
+                [
+                    "supporting insert image",
+                    "focused composition",
+                    "workspace-scale detail",
+                ]
+            )
+
+        if body_excerpt:
+            prompt_parts.append(shorten(body_excerpt, width=180, placeholder=""))
+
+        prompt = ", ".join(part for part in prompt_parts if part)
+        if not prompt:
+            raise ValueError("unable to build fallback prompt bundle")
+
+        return {
+            "prompt": prompt,
+            "negative_prompt": negative_prompt_seed,
+        }
 
     def is_visual_prompt(prompt: str, negative_prompt: str) -> bool:
         haystacks = [prompt.lower(), negative_prompt.lower()]
         if any(fragment in haystack for haystack in haystacks for fragment in disallowed_fragments):
+            return False
+
+        if "?" in prompt or "?" in negative_prompt:
             return False
 
         prompt_words = [word for word in prompt.replace(",", " ").split() if any(ch.isalpha() for ch in word)]
@@ -316,15 +420,29 @@ def request_ollama_prompt(
         "Never critique the source material, mention files, quote code, or suggest website improvements. "
         "Do not include markdown, code fences, or commentary."
     )
+    subject_context = subject_context or {}
+    subject_block = ""
+    if subject_context:
+        subject_lines = []
+        for key in ("title", "description", "brief", "caption", "alt", "body_excerpt"):
+            value = str(subject_context.get(key, "")).strip()
+            if value:
+                subject_lines.append(f"{key.replace('_', ' ').title()}: {value}")
+        if subject_lines:
+            subject_block = "Subject-specific cues:\n" + "\n".join(subject_lines) + "\n\n"
+
     user_prompt = (
         f"Theme brief:\n{theme_brief}\n\n"
+        f"Image role: {subject_mode}\n\n"
+        f"{subject_block}"
         f"Target art direction:\n{art_direction}\n\n"
         f"Negative prompt seed:\n{negative_prompt_seed}\n\n"
         f"Relevant page and theme context:\n{context_block}\n"
     )
     fallback_user_prompt = (
-        "Create a single visual scene prompt for a website hero image.\n\n"
+        f"Create a single visual scene prompt for a {subject_mode} image.\n\n"
         f"Theme brief:\n{theme_brief}\n\n"
+        f"{subject_block}"
         f"Target art direction:\n{art_direction}\n\n"
         f"Negative prompt seed:\n{negative_prompt_seed}\n\n"
         "Return only concrete visual details: environment, objects, lighting, mood, framing, and composition. "
@@ -371,6 +489,9 @@ def request_ollama_prompt(
         except (json.JSONDecodeError, KeyError, TypeError, ValueError) as exc:
             last_error = exc
 
+    if subject_context:
+        return fallback_prompt_bundle()
+
     raise ValueError(f"ollama returned invalid prompt JSON: {last_error}")
 
 
@@ -398,6 +519,16 @@ def build_context_block(
     prompt_generation = manifest["prompt_generation"]
     paths = list(prompt_generation.get("shared_context", [])) + list(config.get("context", []))
     blocks: list[str] = []
+    subject_context = config.get("subject_context")
+    if isinstance(subject_context, dict):
+        subject_lines = []
+        for key in ("title", "description", "brief", "caption", "alt", "body_excerpt"):
+            value = str(subject_context.get(key, "")).strip()
+            if value:
+                subject_lines.append(f"{key.replace('_', ' ').title()}: {value}")
+        if subject_lines:
+            blocks.append("ARTICLE SUBJECT\n" + "\n".join(subject_lines))
+
     for relative_path in paths:
         absolute_path = repo_root / relative_path
         if not absolute_path.exists():
@@ -552,6 +683,8 @@ def render_target(
         context_block=context_block,
         art_direction=config["art_direction"],
         negative_prompt_seed=config["negative_prompt_seed"],
+        subject_mode=str(config.get("subject_mode", "page")),
+        subject_context=config.get("subject_context"),
     )
 
     positive_prompt = f'{prompt_generation["theme_brief"]} {prompt_bundle["prompt"]}'
