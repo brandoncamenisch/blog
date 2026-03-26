@@ -100,8 +100,11 @@ In-article generated images:
 - each entry should include:
   - `id`: stable kebab-case identifier
   - `alt`: alt text used in rendered HTML
-  - `caption`: optional visible caption
+  - `caption`: optional visible caption written like a magazine caption: one sentence that either
+    states a fact, gives a practical tip, or tells the reader what to notice in the image
   - `brief`: the post-specific visual intent that Ollama should blend with the global theme
+- treat `caption` as reader-facing editorial copy, not prompt scaffolding; it should make sense next
+  to the surrounding paragraph even if someone skims the image by itself
 - place `[[generated-image:your-id]]` on its own line in the markdown body where the image should appear
 - generated article images render to `/images/generated/posts/<post-slug>/<image-id>.jpg`
 
@@ -113,7 +116,7 @@ title: 'Launching the blog'
 generatedImages:
   - id: first-night-rack
     alt: 'AI-generated Linux publishing desk with compact rack gear.'
-    caption: 'First-night publishing workspace after the launch.'
+    caption: 'The first version of a publishing system should keep the path from writing to deploy short and easy to trust.'
     brief: 'Quiet Linux writing desk, pane-like monitors, fresh deployment energy.'
 ---
 

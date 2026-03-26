@@ -101,6 +101,24 @@
       "sampler_name": "euler",
       "scheduler": "normal",
       "seed": 24032601
+    },
+    "top-tools-platform-work-2026": {
+      "watch": [
+        "src/content/blog/top-tools-platform-work-2026.md"
+      ],
+      "context": [
+        "src/content/blog/top-tools-platform-work-2026.md"
+      ],
+      "output": "public/images/generated/top-tools-platform-work-2026-terminal-banner.jpg",
+      "art_direction": "Create a wide hero image for a post about the top tools to know for platform work in 2026. Show a calm Linux platform workspace with architecture notes, cloud and container cues, observability displays, deployment workflow hints, and the feeling of technical judgment rather than tool hype. The scene should feel practical, cross-functional, and quietly authoritative rather than flashy.",
+      "negative_prompt_seed": "watermark, logo, signature, blurry, unreadable text, fantasy armor, cluttered collage, neon skyline, floating holograms, oversaturated magenta, duplicated monitors, extra limbs, cartoon style, glossy CGI showroom",
+      "width": 1536,
+      "height": 864,
+      "steps": 28,
+      "cfg": 6.3,
+      "sampler_name": "euler",
+      "scheduler": "normal",
+      "seed": 24032602
     }
   }
 }

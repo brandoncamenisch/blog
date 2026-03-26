@@ -168,7 +168,9 @@ def expand_article_image_targets(
                 f"Supporting image brief: {brief}.",
             ]
             if caption:
-                art_direction_parts.append(f"Caption intent: {caption}.")
+                art_direction_parts.append(
+                    f"Editorial caption to visually support: {caption}."
+                )
 
             targets[article_target_name(slug, image_id)] = {
                 "watch": [relative_path],
@@ -417,6 +419,7 @@ def request_ollama_prompt(
         "Return strict JSON with exactly two string keys: prompt and negative_prompt. "
         "Keep the visual language cohesive with the provided theme brief. "
         "Describe only visual scene content, composition, lighting, and mood. "
+        "For article images, treat any caption cues as editorial meaning that the scene should support. "
         "Never critique the source material, mention files, quote code, or suggest website improvements. "
         "Do not include markdown, code fences, or commentary."
     )
