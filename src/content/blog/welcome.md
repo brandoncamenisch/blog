@@ -6,7 +6,7 @@ generatedHeroImage: '/images/generated/launching-the-blog-terminal-banner.jpg'
 generatedImages:
   - id: first-night-rack
     alt: 'AI-generated first-night publishing workspace with a Linux desk, compact lab gear, and pane-like monitors.'
-    caption: 'A supporting insert image for the launch post: a first-night publishing desk with calm tmux-like monitor layouts and fresh deployment energy.'
+    caption: 'A small publishing stack is easier to trust when writing, review, and deploy live close together.'
     brief: 'Create a supporting in-article image for the first post that feels like the blog has just been brought online: quiet Linux writing desk, compact rack gear, pane-like monitors, first-night deployment energy, and grounded optimism.'
 ---
 

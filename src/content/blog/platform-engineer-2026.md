@@ -6,7 +6,7 @@ generatedHeroImage: '/images/generated/platform-engineer-2026-terminal-banner.jp
 generatedImages:
   - id: control-plane-desk
     alt: 'AI-generated platform engineering workspace with observability screens, deployment controls, and a quiet Linux desk.'
-    caption: 'A supporting insert for the platform-engineering post: a calm control-plane workspace with observability, deployment, and workflow cues.'
+    caption: 'A healthy control plane keeps telemetry, deployment guardrails, and workflow cues in one calm place so the safe path stays obvious.'
     brief: 'Create a supporting in-article image for a platform engineering essay in 2026: practical control-plane workspace, observability views, deployment guardrails, internal platform tooling, and a calm operator perspective.'
 ---
 

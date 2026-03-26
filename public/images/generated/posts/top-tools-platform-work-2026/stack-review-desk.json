@@ -1,0 +1,21 @@
+{
+  "target": "article-top-tools-platform-work-2026-stack-review-desk",
+  "prompt_id": "f705ecf8-dd6c-4d4f-89a6-47b614b8cc10",
+  "source_output": "comfyui/output/site/article-top-tools-platform-work-2026-stack-review-desk_00001_.png",
+  "prompt": "A static Astro blog with a cyberpunk terminal and tmux-session aesthetic. Generate cinematic but believable scenes with dark charcoal and near-black backgrounds, green phosphor glow, restrained cyan highlights, subtle amber indicator lights, practical monitors, compact home-lab hardware, Linux workstation energy, and real-world desk scale. Favor moody contrast, atmospheric depth, scanline-like light texture, and disciplined composition. Avoid fantasy armor, exaggerated sci-fi cityscapes, excessive magenta, floating holograms, or anything that feels like game splash art. Never include readable text, logos, watermarks, UI overlays, or terminal screenshots with legible words. A practical Linux desk with a compact setup featuring a monitor displaying cloud diagrams and observability screens. A small terminal window shows deployment workflow cues, with subtle amber indicator lights and green phosphor glow. Architectural notes are scattered on the desk, and there's a Terraform icon prominently displayed. The scene has moody contrast and atmospheric depth, fitting the cyberpunk terminal aesthetic.",
+  "negative_prompt": "watermark, logo, signature, blurry, unreadable text, fantasy armor, exaggerated skyline, floating holograms, cluttered collage, duplicate monitors, extra limbs, cartoon rendering, glossy CGI showroom",
+  "ollama_model": "qwen2.5:7b-instruct",
+  "context_files": [
+    "src/components/Header.astro",
+    "src/components/Footer.astro",
+    "src/styles/global.css",
+    "src/consts.ts"
+  ],
+  "width": 1344,
+  "height": 768,
+  "steps": 28,
+  "cfg": 6.0,
+  "sampler_name": "euler",
+  "scheduler": "normal",
+  "seed": 3714187801
+}

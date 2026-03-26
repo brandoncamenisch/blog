@@ -1,0 +1,22 @@
+{
+  "target": "top-tools-platform-work-2026",
+  "prompt_id": "65abe06c-ecbb-4138-9c0f-1267cf27fdd3",
+  "source_output": "comfyui/output/site/top-tools-platform-work-2026_00001_.png",
+  "prompt": "A static Astro blog with a cyberpunk terminal and tmux-session aesthetic. Generate cinematic but believable scenes with dark charcoal and near-black backgrounds, green phosphor glow, restrained cyan highlights, subtle amber indicator lights, practical monitors, compact home-lab hardware, Linux workstation energy, and real-world desk scale. Favor moody contrast, atmospheric depth, scanline-like light texture, and disciplined composition. Avoid fantasy armor, exaggerated sci-fi cityscapes, excessive magenta, floating holograms, or anything that feels like game splash art. Never include readable text, logos, watermarks, UI overlays, or terminal screenshots with legible words. A calm Linux workstation with architecture notes, cloud and container cues, observability displays, deployment workflow hints, and subtle green phosphor glow. The scene features practical monitors, compact home-lab hardware, and real-world desk scale. A terminal session shows a prompt with a blinking cursor, indicating active use. The background is dark charcoal with atmospheric depth and moody contrast, enhanced by scanline-like light texture. Subtle amber indicator lights add to the realistic feel of a Linux workstation in 2026.",
+  "negative_prompt": "watermark, logo, signature, blurry, unreadable text, fantasy armor, cluttered collage, neon skyline, floating holograms, oversaturated magenta, duplicated monitors, extra limbs, cartoon style, glossy CGI showroom",
+  "ollama_model": "qwen2.5:7b-instruct",
+  "context_files": [
+    "src/components/Header.astro",
+    "src/components/Footer.astro",
+    "src/styles/global.css",
+    "src/consts.ts",
+    "src/content/blog/top-tools-platform-work-2026.md"
+  ],
+  "width": 1536,
+  "height": 864,
+  "steps": 28,
+  "cfg": 6.3,
+  "sampler_name": "euler",
+  "scheduler": "normal",
+  "seed": 24032602
+}
