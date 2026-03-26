@@ -12,17 +12,17 @@ generatedImages:
 
 Every few years the tooling conversation in infrastructure gets a little louder and a little worse.
 
-There is always a fresh crop of diagrams, roadmaps, opinionated platform stacks, and hot takes about what is “essential.” But when you look past the churn and pay attention to what keeps showing up in real platform-shaped work, the list is not actually that mysterious.
+There is always a fresh crop of diagrams, roadmaps, opinionated platform stacks, and hot takes about what is “essential.” Most of it sounds urgent for about six weeks. Then the same old work shows back up: shipping safely, understanding failure, keeping environments repeatable, and making life easier for the engineers who have to build on top of all of it.
 
 [[generated-image:stack-review-desk]]
 
-I spent some time digging through the YAML files in `/home/captain/Public/ghorg/brandoncamenisch/resume/work`, where a lot of platform, DevOps, SRE, and infrastructure-focused resume variants live. The wording shifts from file to file, but the center of gravity stays put. The same tool families keep resurfacing: infrastructure as code, containers and schedulers, delivery pipelines, observability, security controls, and a small set of languages that hold the whole thing together.
+I was recently digging through a pile of platform- and infrastructure-oriented resume YAMLs in my `resume/work` tree, and the interesting part was not the individual wording. It was how stubbornly the same categories kept reappearing. Different companies, different titles, different emphases — but the same bones underneath the work.
 
-That feels about right to me.
+That feels honest to me.
 
-Platform work in 2026 is not about knowing the most tools. It is about knowing the few layers that keep reappearing underneath real systems, then getting good enough with them that you can make sane decisions under pressure.
+Platform work in 2026 is not about knowing the most tools. It is about knowing which layers keep reappearing underneath real systems, and getting good enough with them that you can make clear decisions when the nice abstraction cracks open.
 
-If I were telling someone where to invest serious time, this is the stack I would point at.
+If I were giving someone a serious roadmap instead of a trendy one, this is where I would tell them to spend their time.
 
 ## 1. Terraform, because repeatability is still the job
 
@@ -38,13 +38,13 @@ You do not need to memorize every API object or pretend the cluster is sacred. Y
 
 ## 3. Cloud fundamentals across AWS, Azure, and GCP
 
-The cloud story in those YAMLs is familiar: AWS everywhere, Azure and GCP often enough that pretending they do not matter is a fast way to sound underprepared.
+The cloud story is familiar: AWS everywhere, Azure and GCP often enough that pretending they do not matter is a fast way to sound underprepared.
 
 The useful skill is not vendor trivia. It is being able to reason about identity, networking, compute, storage, and cost in whichever cloud you land in, then map those primitives back to the platform patterns your team actually need.
 
 ## 4. CI/CD systems like GitHub Actions and GitLab CI
 
-Platform work is hard to separate from delivery workflows. GitHub Actions and GitLab CI kept showing up because they sit right in the path between code and production.
+Platform work is hard to separate from delivery workflows. GitHub Actions and GitLab CI keep showing up because they sit right in the path between code and production.
 
 Knowing these tools means more than writing a pipeline file that happens to go green once. It means understanding build isolation, secrets handling, promotion flow, artifact management, policy checks, and how to keep deployment paths boring enough that teams trust them.
 
@@ -56,7 +56,7 @@ Docker is not the whole job, but it is still one of the fastest ways to build in
 
 ## 6. Observability with Prometheus, Grafana, and Datadog
 
-The recurring observability stack in the YAML set was hard to miss. Prometheus, Grafana, and Datadog keep showing up because platform teams are expected to know not only whether a service is up, but whether the platform itself is healthy, efficient, and trusted.
+The recurring observability stack is hard to miss. Prometheus, Grafana, and Datadog keep showing up because platform teams are expected to know not only whether a service is up, but whether the platform itself is healthy, efficient, and trusted.
 
 That means learning how to think in signals: metrics, logs, traces, alert quality, dashboards, SLOs, and feedback loops that help teams notice problems before they turn into a calendar event with a write-up.
 
@@ -68,13 +68,13 @@ That is a healthy shift. In 2026, good platform work is not just about speed. It
 
 ## 8. Automation languages: Go, Python, and Bash
 
-The language pattern in the YAMLs is also consistent. Go and Python come up constantly, with Bash still hanging around because platform teams live close to operating systems, build scripts, and glue code.
+The language pattern is also consistent. Go and Python come up constantly, with Bash still hanging around because platform teams live close to operating systems, build scripts, and glue code.
 
 If I were choosing where to invest, I would learn enough Go to build reliable tooling and services, enough Python to move quickly in automation and data-shaped workflows, and enough shell to debug and compose systems without flinching.
 
 ## 9. The surrounding orchestration layer: Ansible, ArgoCD, Nomad, ECS, and Fargate
 
-One of the clearest lessons from the scan is that platform work is rarely a single-tool job. Even if Kubernetes is central, teams still keep running into surrounding systems for configuration management, GitOps delivery, or workload scheduling.
+One of the clearest lessons here is that platform work is rarely a single-tool job. Even if Kubernetes is central, teams still keep running into surrounding systems for configuration management, GitOps delivery, or workload scheduling.
 
 That is why tools like Ansible, ArgoCD, Nomad, ECS, and Fargate still matter. You may not use all of them in one role, but understanding what problem each one is trying to solve makes you much more adaptable when the stack shifts underneath you.
 
