@@ -1,0 +1,21 @@
+{
+  "target": "article-platform-engineer-2026-control-plane-desk",
+  "prompt_id": "5ced4383-7704-46b5-8ee3-644c9f73a6a8",
+  "source_output": "comfyui/output/site/article-platform-engineer-2026-control-plane-desk_00001_.png",
+  "prompt": "A static Astro blog with a cyberpunk terminal and tmux-session aesthetic. Generate cinematic but believable scenes with dark charcoal and near-black backgrounds, green phosphor glow, restrained cyan highlights, subtle amber indicator lights, practical monitors, compact home-lab hardware, Linux workstation energy, and real-world desk scale. Favor moody contrast, atmospheric depth, scanline-like light texture, and disciplined composition. Avoid fantasy armor, exaggerated sci-fi cityscapes, excessive magenta, floating holograms, or anything that feels like game splash art. Never include readable text, logos, watermarks, UI overlays, or terminal screenshots with legible words. quiet Linux writing desk, compact rack gear, two monitor-like screens with cyan borders, amber indicator lights, observability dashboard with scanline texture, deployment controls in the background, subtle green phosphor glow, cinematic contrast, calm operator perspective",
+  "negative_prompt": "watermark, logo, signature, blurry, unreadable text, fantasy armor, exaggerated skyline, floating holograms, cluttered collage, duplicate monitors, extra limbs, cartoon rendering, glossy CGI showroom, text",
+  "ollama_model": "qwen2.5:7b-instruct",
+  "context_files": [
+    "src/components/Header.astro",
+    "src/components/Footer.astro",
+    "src/styles/global.css",
+    "src/consts.ts"
+  ],
+  "width": 1344,
+  "height": 768,
+  "steps": 28,
+  "cfg": 6.0,
+  "sampler_name": "euler",
+  "scheduler": "normal",
+  "seed": 1362342078
+}

@@ -1,0 +1,22 @@
+{
+  "target": "platform-engineer-2026",
+  "prompt_id": "35feda19-6003-4882-a76e-3beab77a6ba2",
+  "source_output": "comfyui/output/site/platform-engineer-2026_00001_.png",
+  "prompt": "A static Astro blog with a cyberpunk terminal and tmux-session aesthetic. Generate cinematic but believable scenes with dark charcoal and near-black backgrounds, green phosphor glow, restrained cyan highlights, subtle amber indicator lights, practical monitors, compact home-lab hardware, Linux workstation energy, and real-world desk scale. Favor moody contrast, atmospheric depth, scanline-like light texture, and disciplined composition. Avoid fantasy armor, exaggerated sci-fi cityscapes, excessive magenta, floating holograms, or anything that feels like game splash art. Never include readable text, logos, watermarks, UI overlays, or terminal screenshots with legible words. A calm Linux workstation with a near-black background and dark charcoal tones. The screen displays multiple pane-like observability views, deployment controls, and internal platform tooling. Green phosphor glow from monitors creates subtle scanline texture. Amber indicator lights on compact hardware add practical details. The scene feels mature, operational, and quietly powerful with restrained cyan highlights.",
+  "negative_prompt": "watermark, logo, signature, blurry, unreadable text, fantasy armor, cluttered collage, neon city skyline, floating holograms, oversaturated magenta, duplicated screens, extra limbs, cartoon style, glossy CGI showroom",
+  "ollama_model": "qwen2.5:7b-instruct",
+  "context_files": [
+    "src/components/Header.astro",
+    "src/components/Footer.astro",
+    "src/styles/global.css",
+    "src/consts.ts",
+    "src/content/blog/platform-engineer-2026.md"
+  ],
+  "width": 1536,
+  "height": 864,
+  "steps": 28,
+  "cfg": 6.3,
+  "sampler_name": "euler",
+  "scheduler": "normal",
+  "seed": 24032601
+}
