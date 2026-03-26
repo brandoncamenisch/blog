@@ -83,6 +83,24 @@
       "sampler_name": "euler",
       "scheduler": "normal",
       "seed": 24032403
+    },
+    "platform-engineer-2026": {
+      "watch": [
+        "src/content/blog/platform-engineer-2026.md"
+      ],
+      "context": [
+        "src/content/blog/platform-engineer-2026.md"
+      ],
+      "output": "public/images/generated/platform-engineer-2026-terminal-banner.jpg",
+      "art_direction": "Create a wide hero image for an essay about being a platform engineer in 2026. Show a calm but high-leverage Linux control-plane workspace with pane-like observability displays, internal platform tooling, deployment and policy cues, compact infrastructure references, and the feeling of engineering leverage instead of firefighting. The scene should feel mature, operational, and quietly powerful rather than chaotic or flashy.",
+      "negative_prompt_seed": "watermark, logo, signature, blurry, unreadable text, fantasy armor, cluttered collage, neon city skyline, floating holograms, oversaturated magenta, duplicated screens, extra limbs, cartoon style, glossy CGI showroom",
+      "width": 1536,
+      "height": 864,
+      "steps": 28,
+      "cfg": 6.3,
+      "sampler_name": "euler",
+      "scheduler": "normal",
+      "seed": 24032601
     }
   }
 }

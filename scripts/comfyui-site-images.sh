@@ -95,7 +95,25 @@ capture_preflight_status() {
 }
 
 ensure_stack() {
-  docker_compose_cmd -f "$compose_file" up -d ollama comfyui
+  local ollama_ready=0
+  local comfyui_ready=0
+
+  if curl --silent --fail "$ollama_api_url/api/tags" >/dev/null 2>&1; then
+    ollama_ready=1
+  fi
+
+  if curl --silent --fail "$comfyui_api_url/system_stats" >/dev/null 2>&1; then
+    comfyui_ready=1
+  fi
+
+  if (( ollama_ready == 0 && comfyui_ready == 0 )); then
+    docker_compose_cmd -f "$compose_file" up -d ollama comfyui
+  elif (( ollama_ready == 1 && comfyui_ready == 0 )); then
+    docker_compose_cmd -f "$compose_file" up -d comfyui
+  elif (( ollama_ready == 0 && comfyui_ready == 1 )); then
+    docker_compose_cmd -f "$compose_file" up -d ollama
+  fi
+
   wait_for_ollama
   wait_for_comfyui
 }
