@@ -21,12 +21,20 @@ const stringHeroImage = typeof heroImage === 'string' ? heroImage : undefined;
 				max-width: 100%;
 				margin: 0;
 			}
+			*,
+			*::before,
+			*::after {
+				box-sizing: border-box;
+			}
 			.hero-image {
 				width: 100%;
 			}
 			.hero-image img {
 				display: block;
 				margin: 0 auto;
+				width: 100%;
+				max-width: 100%;
+				height: auto;
 				border-radius: 12px;
 				box-shadow: var(--box-shadow);
 			}
@@ -87,6 +95,8 @@ const stringHeroImage = typeof heroImage === 'string' ? heroImage : undefined;
 			.prose :global(.generated-article-image img) {
 				display: block;
 				width: 100%;
+				max-width: 100%;
+				height: auto;
 				border-radius: 10px;
 				border: 1px solid rgba(var(--accent), 0.28);
 			}
@@ -95,6 +105,24 @@ const stringHeroImage = typeof heroImage === 'string' ? heroImage : undefined;
 				color: rgb(var(--muted));
 				font-size: 0.92rem;
 				line-height: 1.5;
+			}
+			@media (max-width: 720px) {
+				main {
+					width: 100%;
+					padding: 0 0.75rem;
+				}
+				.prose {
+					width: 100%;
+					max-width: 100%;
+					padding: 1rem;
+				}
+				.hero-image {
+					padding: 0.5rem;
+				}
+				.prose :global(.generated-article-image) {
+					margin: 1.2rem 0;
+					padding: 0.6rem;
+				}
 			}
 		</style>
 	</head>
