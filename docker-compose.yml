@@ -1,0 +1,19 @@
+services:
+  dev:
+    build: .
+    command: npx astro dev --host 0.0.0.0
+    ports:
+      - "4321:4321"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+
+  preview:
+    build: .
+    command: sh -c "npx astro build && npx astro preview --host 0.0.0.0"
+    ports:
+      - "4321:4321"
+    environment:
+      - NODE_ENV=production

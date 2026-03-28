@@ -102,6 +102,24 @@
       "scheduler": "normal",
       "seed": 24032601
     },
+    "poop-premature-over-optimization-pattern": {
+      "watch": [
+        "src/content/blog/poop-premature-over-optimization-pattern.md"
+      ],
+      "context": [
+        "src/content/blog/poop-premature-over-optimization-pattern.md"
+      ],
+      "output": "public/images/generated/poop-premature-over-optimization-pattern-terminal-banner.jpg",
+      "art_direction": "Create a wide hero image for an essay about premature over optimization in DevOps and platform engineering. Show a Linux engineering workspace overwhelmed by unnecessary complexity: a whiteboard covered in tangled architecture diagrams, an engineer staring at an over-engineered pipeline, pane-like screens showing sprawling infra that nobody asked for, and a quiet sense of having gone too far before solving the actual problem. The mood should be dry and self-aware rather than dramatic, grounded in real home-lab or office hardware.",
+      "negative_prompt_seed": "watermark, logo, signature, blurry, unreadable text, fantasy armor, cluttered collage, neon skyline, floating holograms, oversaturated magenta, duplicated monitors, extra limbs, cartoon style, glossy CGI showroom",
+      "width": 1536,
+      "height": 864,
+      "steps": 28,
+      "cfg": 6.3,
+      "sampler_name": "euler",
+      "scheduler": "normal",
+      "seed": 24032701
+    },
     "top-tools-platform-work-2026": {
       "watch": [
         "src/content/blog/top-tools-platform-work-2026.md"
