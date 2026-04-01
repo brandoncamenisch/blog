@@ -1,101 +1,178 @@
 ---
-const today = new Date();
+import HeaderLink from './HeaderLink.astro';
+const { count } = Astro.props;
 ---
 
-<footer>
-  <div class="status-line left">
-    <span class="segment">
-      <span class="icon" aria-hidden="true"></span>
-      <span>session:blog</span>
+<nav class="tmux-bar">
+  <div class="tmux-tabs">
+    <HeaderLink href="/">
+      <span class="win-idx">1</span>
+      <span class="nf" aria-hidden="true">󰆍</span>
+      <span>home</span>
+    </HeaderLink>
+    <HeaderLink href="/work">
+      <span class="win-idx">2</span>
+      <span class="nf" aria-hidden="true">󰂺</span>
+      <span>work</span>
+    </HeaderLink>
+    <HeaderLink href="/life">
+      <span class="win-idx">3</span>
+      <span class="nf" aria-hidden="true">󰙊</span>
+      <span>life</span>
+    </HeaderLink>
+  </div>
+
+  <div class="tmux-right">
+    {count != null && (
+      <span class="seg seg-count">{count} posts</span>
+    )}
+    <span class="sep sep-c" aria-hidden="true"></span>
+    <span class="seg seg-info">
+      <span class="nf" aria-hidden="true">󱂬</span>
+      <span>brandoncamenisch.com</span>
     </span>
-    <span class="segment">
-      <span class="icon" aria-hidden="true"></span>
-      <span>branch:main</span>
+    <span class="seg seg-links">
+      <a href="/time" title="Timeline">
+        <span class="sr-only">Timeline</span>
+        <span class="nf" aria-hidden="true"></span>
+      </a>
+      <a href="https://github.com/brandoncamenisch" target="_blank" title="GitHub">
+        <span class="sr-only">GitHub</span>
+        <span class="nf" aria-hidden="true"></span>
+      </a>
+      <a href="/rss.xml" target="_blank" title="RSS Feed">
+        <span class="sr-only">RSS</span>
+        <span class="nf" aria-hidden="true"></span>
+      </a>
     </span>
   </div>
-  <div class="status-line middle">
-    <span class="segment">
-      <span class="icon" aria-hidden="true">󱂬</span>
-      <span>github-pages</span>
-    </span>
-    <span class="segment">
-      <span class="icon" aria-hidden="true"></span>
-      <span>/blog</span>
-    </span>
-  </div>
-  <div class="status-line right">
-    <a href="/rss.xml" title="RSS feed">
-      <span class="sr-only">View the RSS feed</span>
-      <span class="icon" aria-hidden="true"></span>
-    </a>
-    <a href="https://github.com/brandoncamenisch/blog" target="_blank" title="Blog repository">
-      <span class="sr-only">Go to the blog GitHub repository</span>
-      <span class="icon" aria-hidden="true"></span>
-    </a>
-  </div>
-</footer>
+</nav>
+
 <style>
-  footer {
-    width: min(1120px, calc(100% - 2rem));
-    margin: 0 auto 3rem;
-    padding: 0.55rem 0.7rem;
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items: center;
-    gap: 0.8rem;
-    background: rgba(var(--surface), 0.96);
-    border: 1px solid rgba(var(--border), 0.48);
-    border-top: none;
-    border-radius: 0 0 14px 14px;
-    box-shadow: var(--box-shadow);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: rgb(var(--muted));
-    font-size: 0.78rem;
-  }
-  .status-line {
+  .tmux-bar {
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    align-items: stretch;
+    justify-content: flex-start;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    width: 100%;
+    background: rgb(var(--black));
+    font-size: 0.8rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-family: 'JetBrainsMonoNerd', monospace;
+    border-top: 1px solid rgba(var(--border), 0.15);
   }
-  .middle {
-    justify-content: center;
+
+  .tmux-right {
+    display: flex;
+    align-items: stretch;
+    flex-shrink: 0;
+    margin-left: auto;
   }
-  .right {
-    justify-content: flex-end;
+
+  .tmux-tabs {
+    display: flex;
+    align-items: stretch;
   }
-  .segment,
-  .right a {
+
+  .seg {
     display: inline-flex;
     align-items: center;
     gap: 0.45rem;
-    min-height: 2rem;
-    padding: 0 0.75rem;
-    border-radius: 8px;
-    border: 1px solid rgba(var(--border), 0.32);
-    background: rgba(var(--surface-alt), 0.92);
+    padding: 0.4rem 0.8rem;
+    white-space: nowrap;
   }
-  .right a {
-    text-decoration: none;
+
+  .sep {
+    display: flex;
+    align-items: center;
+    font-family: 'JetBrainsMonoNerd', monospace;
+    font-size: 1.45rem;
+    line-height: 1;
+    padding: 0;
+  }
+
+  .sep-c {
+    color: rgb(var(--surface-alt));
+    background: rgb(var(--black));
+  }
+  .seg-count {
+    color: rgba(210, 80, 80, 0.85);
+    font-size: 0.75em;
+    letter-spacing: 0.08em;
+  }
+  .seg-info {
+    background: rgb(var(--surface-alt));
     color: rgb(var(--muted));
   }
-  .right a:hover {
+  .sep-d {
+    color: rgb(var(--accent-dark));
+    background: rgb(var(--surface-alt));
+  }
+  .seg-links {
+    color: rgb(var(--muted));
+    gap: 0.2rem;
+  }
+  .seg-links a {
+    color: rgb(var(--accent-bright));
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 0.25rem;
+    transition: color 0.15s;
+  }
+  .seg-links a:hover {
     color: rgb(var(--text));
   }
-  .icon {
-    font-family: 'NotoMonoNerd', monospace;
-    color: rgb(var(--accent-bright));
-    text-shadow: 0 0 10px rgba(var(--glow), 0.55);
+
+  .tmux-tabs :global(a) {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.9rem;
+    color: rgb(var(--muted));
+    text-decoration: none;
+    border-right: 1px solid rgba(var(--border), 0.12);
+    transition: color 0.15s, background 0.15s;
   }
-  @media (max-width: 860px) {
-    footer {
-      grid-template-columns: 1fr;
+  .tmux-tabs :global(a.active) {
+    color: rgb(var(--accent-bright));
+    background: rgba(var(--accent), 0.08);
+    font-weight: 700;
+    text-shadow: 0 0 8px rgba(var(--glow), 0.4);
+  }
+  .tmux-tabs :global(a:hover:not(.active)) {
+    color: rgb(var(--text));
+    background: rgba(var(--surface-alt), 0.5);
+  }
+
+  .win-idx {
+    color: rgba(var(--muted), 0.55);
+    font-size: 0.75em;
+  }
+  .nf {
+    font-family: 'JetBrainsMonoNerd', monospace;
+    font-size: 1rem;
+    line-height: 1;
+  }
+
+  @media (max-width: 720px) {
+    .tmux-bar {
+      flex-wrap: wrap;
     }
-    .left,
-    .middle,
-    .right {
+    .tmux-tabs {
+      width: 100%;
+      border-bottom: 1px solid rgba(var(--border), 0.15);
       justify-content: center;
       flex-wrap: wrap;
+    }
+    .tmux-right {
+      width: 100%;
+      justify-content: flex-end;
     }
   }
 </style>

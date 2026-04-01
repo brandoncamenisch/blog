@@ -4,20 +4,14 @@ variable "cloudflare_zone_id" {
   sensitive   = true
 }
 
-variable "blog_subdomain" {
-  description = "Subdomain name for the blog DNS record."
-  type        = string
-  default     = "blog"
-}
-
 variable "blog_target" {
-  description = "GitHub Pages host target for the blog subdomain."
+  description = "GitHub Pages host target for the apex domain DNS record."
   type        = string
   default     = "brandoncamenisch.github.io"
 }
 
 variable "proxied" {
-  description = "Whether Cloudflare should proxy the blog DNS record."
+  description = "Whether Cloudflare should proxy the DNS record. Must be true for CNAME flattening at the apex."
   type        = bool
-  default     = false
+  default     = true
 }

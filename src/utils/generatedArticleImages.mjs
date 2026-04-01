@@ -17,7 +17,7 @@ function getBlogSlugFromFile(filePath) {
   }
 
   const normalized = filePath.replaceAll('\\', '/');
-  const marker = '/src/content/blog/';
+  const marker = '/src/content/work/';
   const index = normalized.indexOf(marker);
   if (index === -1) {
     throw new Error(`generated image marker only supports blog content files, got: ${filePath}`);

@@ -5,15 +5,31 @@ services:
       - "127.0.0.1:11434:11434"
     volumes:
       - ./ollama:/root/.ollama
+    environment:
+      - CUDA_VISIBLE_DEVICES=1
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
   comfyui:
     build:
       context: .
       dockerfile: Dockerfile
-    gpus: all
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
     ports:
       - "127.0.0.1:8188:8188"
     environment:
       - PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+      - CUDA_VISIBLE_DEVICES=0
     command: >
       python main.py
       --listen 0.0.0.0
@@ -22,7 +38,6 @@ services:
       --input-directory /workspace/input
       --user-directory /workspace/user
       --extra-model-paths-config /workspace/extra_model_paths.yaml
-      --lowvram
     volumes:
       - ./models:/workspace/models
       - ./input:/workspace/input

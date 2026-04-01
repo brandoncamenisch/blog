@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import shutil
 import subprocess
 import sys
@@ -34,6 +35,13 @@ def parse_args() -> argparse.Namespace:
         "--preflight",
         action="store_true",
         help="Validate local inputs and target resolution without contacting ComfyUI or Ollama.",
+    )
+    parser.add_argument(
+        "--count",
+        type=int,
+        default=1,
+        metavar="N",
+        help="Generate N variants with sequential seeds and save to comfyui/picks/<target>/.",
     )
     return parser.parse_args()
 
@@ -285,7 +293,7 @@ def request_json(url: str, payload: dict) -> dict:
         data=json.dumps(payload).encode("utf-8"),
         headers={"Content-Type": "application/json"},
     )
-    with urllib.request.urlopen(request, timeout=120) as response:
+    with urllib.request.urlopen(request, timeout=600) as response:
         raw = response.read().decode("utf-8")
 
     try:
@@ -340,8 +348,10 @@ def request_ollama_prompt(
         "src/pages",
         "src/content",
         "file:",
-        "code",
-        "developer",
+        "source code",
+        "code snippet",
+        "code review",
+        "developer tool",
         "not desired output",
         "summary",
         "read so far",
@@ -620,6 +630,24 @@ def wait_for_output(api_url: str, prompt_id: str) -> dict:
     raise TimeoutError(f"timed out waiting for ComfyUI history for prompt {prompt_id}")
 
 
+def patch_frontmatter_hero_image(repo_root: Path, target_name: str, image_path: str) -> None:
+    """Add generatedHeroImage to the work post frontmatter if not already set."""
+    md_path = repo_root / "src" / "content" / "work" / f"{target_name}.md"
+    if not md_path.exists():
+        return
+    content = md_path.read_text(encoding="utf-8")
+    if "generatedHeroImage" in content:
+        return
+    patched = re.sub(
+        r"(pubDate: '[^']+'\n)",
+        rf"\1generatedHeroImage: '{image_path}'\n",
+        content,
+        count=1,
+    )
+    if patched != content:
+        md_path.write_text(patched, encoding="utf-8")
+
+
 def copy_generated_file(repo_root: Path, prompt_history: dict, destination: Path) -> Path:
     for node_output in prompt_history["outputs"].values():
         for image in node_output.get("images", []):
@@ -669,6 +697,7 @@ def render_target(
     ollama_url: str,
     target_name: str,
     staged_changed_paths: set[str],
+    count: int = 1,
 ) -> None:
     config = manifest["targets"][target_name]
     model_name = config.get("model", manifest["default_model"])
@@ -694,34 +723,53 @@ def render_target(
     negative_prompt = merge_negative_prompt_parts(
         config["negative_prompt_seed"], prompt_bundle["negative_prompt"]
     )
-    prompt_graph = build_prompt_graph(
-        config,
-        model_name,
-        f"site/{target_name}",
-        positive_prompt,
-        negative_prompt,
-    )
-    response = request_json(f"{api_url.rstrip('/')}/prompt", {"prompt": prompt_graph})
-    prompt_id = response["prompt_id"]
-    prompt_history = wait_for_output(api_url, prompt_id)
 
-    destination = repo_root / config["output"]
-    source_path = copy_generated_file(repo_root, prompt_history, destination)
-    write_metadata(
-        repo_root,
-        destination,
-        target_name,
-        {
-            **config,
-            "prompt": positive_prompt,
-            "negative_prompt": negative_prompt,
-            "ollama_model": prompt_generation["ollama_model"],
-            "context_files": context_files,
-        },
-        prompt_id,
-        source_path,
-    )
-    print(f"generated {target_name}: {destination.relative_to(repo_root)}", file=sys.stderr)
+    base_seed = config["seed"]
+    picks_mode = count > 1
+    picks_dir = repo_root / "comfyui" / "picks" / target_name
+
+    for i in range(count):
+        seed = base_seed + i
+        run_config = {**config, "seed": seed}
+        prompt_graph = build_prompt_graph(
+            run_config,
+            model_name,
+            f"site/{target_name}",
+            positive_prompt,
+            negative_prompt,
+        )
+        response = request_json(f"{api_url.rstrip('/')}/prompt", {"prompt": prompt_graph})
+        prompt_id = response["prompt_id"]
+        prompt_history = wait_for_output(api_url, prompt_id)
+
+        if picks_mode:
+            destination = picks_dir / f"{i + 1:02d}-seed{seed}.jpg"
+        else:
+            destination = repo_root / config["output"]
+
+        source_path = copy_generated_file(repo_root, prompt_history, destination)
+
+        if not picks_mode:
+            patch_frontmatter_hero_image(
+                repo_root, target_name, f"/{destination.relative_to(repo_root / 'public').as_posix()}"
+            )
+            write_metadata(
+                repo_root,
+                destination,
+                target_name,
+                {
+                    **run_config,
+                    "prompt": positive_prompt,
+                    "negative_prompt": negative_prompt,
+                    "ollama_model": prompt_generation["ollama_model"],
+                    "context_files": context_files,
+                },
+                prompt_id,
+                source_path,
+            )
+            print(f"generated {target_name}: {destination.relative_to(repo_root)}", file=sys.stderr)
+        else:
+            print(f"variant {i + 1}/{count} [{seed}]: {destination.relative_to(repo_root)}", file=sys.stderr)
 
 
 def main() -> int:
@@ -772,6 +820,7 @@ def main() -> int:
             args.ollama_url,
             target_name,
             set(changed_paths),
+            count=args.count,
         )
 
     return 0

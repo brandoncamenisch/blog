@@ -1,8 +1,20 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import { LANDING_HERO_IMAGE, SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+
+const workPosts = await getCollection('work');
+const lifePosts = await getCollection('life');
+const workTags = [...new Set(workPosts.flatMap((p) => p.data.tags ?? []))].sort();
+const lifeTags = [...new Set(lifePosts.flatMap((p) => p.data.tags ?? []))].sort();
+const workTagCount = (tag: string) => workPosts.filter((p) => p.data.tags?.includes(tag)).length;
+const lifeTagCount = (tag: string) => lifePosts.filter((p) => p.data.tags?.includes(tag)).length;
+const workSignaCount = workPosts.filter((p) => p.data.signa).length;
+const workHallucinationCount = workPosts.filter((p) => p.data.hallucination).length;
+const lifeSignaCount = lifePosts.filter((p) => p.data.signa).length;
+const lifeHallucinationCount = lifePosts.filter((p) => p.data.hallucination).length;
 ---
 
 <!doctype html>
@@ -15,54 +27,100 @@ import { LANDING_HERO_IMAGE, SITE_DESCRIPTION, SITE_TITLE } from '../consts';
     <main>
       <section class="terminal-panel hero">
         <p class="prompt">$ whoami</p>
-        <h1>Brandon Camenisch // matrix log</h1>
-        <p class="lede">
-          A cyberpunk-flavored terminal for security notes, Linux automation, homelab experiments,
-          and long-form project writeups.
-        </p>
-        <div class="launch-art-frame">
-          <img
-            class="launch-art"
-            src={LANDING_HERO_IMAGE}
-            alt="AI-generated terminal control room artwork for the landing page."
-            loading="eager"
-          />
+        <h1>Brandon Camenisch</h1>
+
+        <div class="sub-section">
+          <p class="bio">Computer engineer since 2000. Started as a sysadmin — bare metal, shell scripts, pagers at 3am. Moved through software engineering, operations, and DevOps as those words were invented around the work. Currently a platform engineer: building the internal systems, pipelines, and abstractions that let other engineers ship without thinking about the scaffolding.</p>
+          <p class="bio">Currently contracting across AI infrastructure, quantitative trading systems, and platform automation. Focused on observability, blast radius reduction, and the quiet craft of keeping complex systems running without heroics.</p>
+          <div class="tag-cloud">
+            {workSignaCount > 0 && <a class="tag tag-signa" href="/tags/signa/">signa<span class="tag-count">{workSignaCount}</span></a>}
+            {workHallucinationCount > 0 && <a class="tag tag-hallucination" href="/tags/hallucination/">hallucination<span class="tag-count">{workHallucinationCount}</span></a>}
+            {workTags.map((tag) => (
+              <a class="tag" href={`/tags/${tag}/`}>{tag}<span class="tag-count">{workTagCount(tag)}</span></a>
+            ))}
+          </div>
+          <div class="hero-actions">
+            <a class="terminal-link" href="/work"><span aria-hidden="true">&#xf054;</span> cd /work</a>
+          </div>
         </div>
-        <div class="hero-actions">
-          <a class="terminal-link" href="/blog"><span aria-hidden="true"></span> open /blog</a>
-          <a class="terminal-link" href="/rss.xml"><span aria-hidden="true"></span> subscribe /rss.xml</a>
+
+        <div class="sub-section">
+          <p class="bio">Notes from outside the terminal. Photography, philosophy, ideas picked up and turned over. Observations about place, time, and the texture of things.</p>
+          <p class="bio">Interested in light, landscape, systems of thought, and the gap between how things look and how they work.</p>
+          <div class="tag-cloud">
+            {lifeSignaCount > 0 && <a class="tag tag-signa" href="/tags/signa/">signa<span class="tag-count">{lifeSignaCount}</span></a>}
+            {lifeHallucinationCount > 0 && <a class="tag tag-hallucination" href="/tags/hallucination/">hallucination<span class="tag-count">{lifeHallucinationCount}</span></a>}
+            {lifeTags.map((tag) => (
+              <a class="tag" href={`/tags/${tag}/`}>{tag}<span class="tag-count">{lifeTagCount(tag)}</span></a>
+            ))}
+          </div>
+          <div class="hero-actions">
+            <a class="terminal-link" href="/life"><span aria-hidden="true">&#xf054;</span> cd /life</a>
+          </div>
+        </div>
+
+      </section>
+
+      <section class="legend-panel">
+        <p class="legend-prompt">$ man ./posts</p>
+        <div class="manpage">
+          <p class="man-line"><span class="man-key">NAME</span></p>
+          <p class="man-line indent">posts — entries across /work and /life</p>
+
+          <p class="man-line"><span class="man-key">SYNOPSIS</span></p>
+          <p class="man-line indent">posts [--signal] [--hallucination] [--tag &lt;tag&gt;]</p>
+
+          <p class="man-line"><span class="man-key">DESCRIPTION</span></p>
+          <p class="man-line indent">Each post exists in one of two states. A <span class="man-em man-signa">signal</span> is a real entry — manually written, a genuine memory or thought.<br>A <span class="man-em man-hallucination">hallucination</span> is a slot in the timeline not yet filled: a haiku, a date, a placeholder waiting to become real.</p>
+
+          <p class="man-line"><span class="man-key">POST TYPES</span></p>
+
+          <div class="man-line indent post-type-row">
+            <div class="mini-card is-signal">
+              <canvas class="mini-matrix" aria-hidden="true"></canvas>
+              <span class="mini-bar"></span>
+            </div>
+            <div class="mini-type-text">
+              <span class="man-em man-signa">signal</span><br>
+              Real content. Written by hand. Red matrix. Committed to memory.
+            </div>
+          </div>
+
+          <div class="man-line indent post-type-row">
+            <div class="mini-card is-hallucination">
+              <canvas class="mini-matrix" aria-hidden="true"></canvas>
+              <span class="mini-slash">///</span>
+            </div>
+            <div class="mini-type-text">
+              <span class="man-em man-hallucination">hallucination</span><br>
+              Generated placeholder. Haiku or AI-drafted. Blue matrix. Not yet real.
+            </div>
+          </div>
+
+          <p class="man-line"><span class="man-key">EXIT STATUS</span></p>
+          <p class="man-line indent">Posts are written when they are written. No SLA. No roadmap.</p>
         </div>
       </section>
 
-      <section class="terminal-panel">
-        <p class="prompt">$ cat mission.txt</p>
-        <p>
-          This site is built with <a href="https://astro.build/">Astro</a>, versioned in Git, and
-          deployed to GitHub Pages. Posts live in <code>src/content/blog/</code>, and the whole
-          publishing stack stays reproducible from code.
-        </p>
-      </section>
+      <section class="legend-panel">
+        <p class="legend-prompt">$ support --method bitcoin</p>
+        <div class="manpage">
+          <p class="man-line"><span class="man-key">PAYMENT</span></p>
 
-      <section class="terminal-panel">
-        <p class="prompt">$ ls content/</p>
-        <ul class="feature-list">
-          <li><span aria-hidden="true"></span> security research and debugging notes</li>
-          <li><span aria-hidden="true">󰒓</span> homelab and automation writeups</li>
-          <li><span aria-hidden="true">󰛦</span> developer workflow experiments</li>
-          <li><span aria-hidden="true">󰍩</span> essays, retrospectives, and project updates</li>
-        </ul>
-      </section>
-
-      <section class="terminal-panel tmux-layout">
-        <div class="pane">
-          <p class="prompt">$ tmux list-panes</p>
-          <p><span class="accent">pane 0</span> :: active writing workspace</p>
-          <p><span class="accent">pane 1</span> :: rss + deploy pipeline</p>
-          <p><span class="accent">pane 2</span> :: drafts / future posts</p>
-        </div>
-        <div class="pane">
-          <p class="prompt">$ echo $STACK</p>
-          <p>astro · markdown · github-pages · opentofu · cloudflare</p>
+          <div class="man-line indent post-type-row">
+            <img src="/bitcoin-qr.svg" alt="Bitcoin address QR code" class="btc-qr" width="64" height="64" />
+            <div class="mini-type-text">
+              <span class="btc-addr-row">
+                <svg class="btc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.767 19.089c4.924.868 6.14-6.025 1.216-6.894m-1.216 6.894L5.86 18.047m5.908 1.042-.347 1.97m1.563-8.864c4.924.869 6.14-6.025 1.215-6.893m-1.215 6.893-3.94-.694m5.155-6.2L8.29 4.26m5.908 1.042.348-1.97M7.48 20.364l3.126-17.727"/></svg>
+                <code class="btc-addr" id="btc-addr">bc1qpxm4r7e2jz03fa6mv98s9sztlzlm8us456mvpx</code>
+                <button class="btc-copy" id="btc-copy" aria-label="Copy address" title="Copy">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                  <span id="btc-copy-label">copy</span>
+                </button>
+              </span><br>
+              If you find value in the work, scan or copy.
+            </div>
+          </div>
         </div>
       </section>
     </main>
@@ -72,60 +130,273 @@ import { LANDING_HERO_IMAGE, SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 
 <style>
   .hero {
-    margin-bottom: 2rem;
+    margin-bottom: 0;
   }
-  .lede {
-    font-size: 1.15rem;
+  .sub-section {
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid rgba(var(--border), 0.18);
+  }
+  .bio {
+    margin: 0 0 1.1rem;
+    color: rgb(var(--muted));
+    font-size: 1.1rem;
+    line-height: 1.65;
+  }
+  .tag-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+  }
+  .tag {
+    display: inline-block;
+    padding: 0.2rem 0.65rem;
+    border: 1px solid rgba(var(--accent), 0.45);
+    border-radius: 0;
+    font-size: 0.78rem;
+    color: rgb(var(--accent-bright));
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    transition: background 0.15s, color 0.15s;
+  }
+  .tag:hover {
+    background: rgba(var(--accent), 0.15);
+    color: rgb(var(--text));
+  }
+  .tag.tag-signa {
+    border-color: rgba(200, 50, 50, 0.5);
+    color: rgba(200, 50, 50, 0.85);
+  }
+  .tag.tag-signa:hover {
+    background: rgba(200, 50, 50, 0.12);
+    color: rgba(220, 70, 70, 1);
+  }
+  .tag.tag-hallucination {
+    border-color: rgba(60, 100, 230, 0.5);
+    color: rgba(60, 100, 230, 0.85);
+  }
+  .tag.tag-hallucination:hover {
+    background: rgba(60, 100, 230, 0.12);
+    color: rgba(80, 120, 240, 1);
+  }
+  .tag-count {
+    font-size: 0.65rem;
+    opacity: 0.55;
+    margin-left: 0.3em;
   }
   .hero-actions {
     display: flex;
     flex-wrap: wrap;
     gap: 1rem;
-    margin-top: 1.5rem;
   }
-  .launch-art-frame {
-    margin-top: 1.5rem;
-    border: 1px solid rgba(var(--accent), 0.32);
-    border-radius: 12px;
-    overflow: hidden;
-    background: rgba(var(--surface-alt), 0.85);
-    box-shadow: var(--box-shadow);
+
+  /* ── man page ── */
+  .legend-panel {
+    border-top: 1px solid rgba(var(--border), 0.18);
+    padding: 1rem 1.25rem 1.5rem;
+    font-family: 'JetBrainsMonoNerd', monospace;
   }
-  .launch-art {
-    display: block;
-    width: 100%;
-    border-bottom: 1px solid rgba(var(--border), 0.32);
+  .legend-prompt {
+    font-size: 0.72rem;
+    color: rgba(var(--muted), 0.5);
+    margin: 0 0 1rem;
+    letter-spacing: 0.06em;
   }
-  .feature-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: grid;
-    gap: 0.8rem;
-  }
-  .feature-list li {
+  .manpage {
     display: flex;
-    gap: 0.7rem;
-    align-items: center;
+    flex-direction: column;
+    gap: 0.15rem;
   }
-  .tmux-layout {
-    display: grid;
-    grid-template-columns: 1.3fr 1fr;
-    gap: 1rem;
+  .man-line {
+    margin: 0;
+    font-size: 0.78rem;
+    line-height: 1.7;
+    color: rgba(var(--muted), 0.65);
+    white-space: pre-wrap;
   }
-  .pane {
-    min-height: 100%;
-    padding: 1rem;
-    border: 1px solid rgba(var(--border), 0.25);
-    border-radius: 10px;
-    background: rgba(var(--surface-alt), 0.65);
+  .man-line + .man-line:not(.indent):not(.indent2) {
+    margin-top: 0.75rem;
   }
-  .accent {
+  .man-key {
+    color: rgb(var(--text));
+    font-weight: 700;
+    letter-spacing: 0.08em;
+  }
+  .man-em {
     color: rgb(var(--accent-bright));
   }
-  @media (max-width: 720px) {
-    .tmux-layout {
-      grid-template-columns: 1fr;
-    }
+  .man-signa {
+    color: rgba(200, 50, 50, 0.9);
+  }
+  .man-hallucination {
+    color: rgba(60, 100, 230, 0.9);
+  }
+  .indent  { padding-left: 2.5rem; }
+  .indent2 { padding-left: 5rem; }
+
+  /* ── bitcoin ── */
+  .btc-qr {
+    width: 64px;
+    height: 64px;
+    border: 1px solid rgba(var(--border), 0.3);
+    flex-shrink: 0;
+    image-rendering: pixelated;
+  }
+  .btc-addr-row {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin-top: 0.35rem;
+  }
+  .btc-icon {
+    width: 14px;
+    height: 14px;
+    color: rgb(180, 90, 20);
+    flex-shrink: 0;
+  }
+  .btc-addr {
+    font-size: 0.7rem;
+    color: rgb(var(--accent-bright));
+    letter-spacing: 0.03em;
+    background: rgba(var(--surface), 0.6);
+    border: 1px solid rgba(var(--border), 0.25);
+    padding: 0.15rem 0.45rem;
+    user-select: all;
+  }
+  .btc-copy {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: none;
+    border: 1px solid rgba(var(--border), 0.3);
+    color: rgba(var(--muted), 0.6);
+    font-family: 'JetBrainsMonoNerd', monospace;
+    font-size: 0.68rem;
+    padding: 0.15rem 0.45rem;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .btc-copy:hover {
+    color: rgb(var(--accent-bright));
+    border-color: rgba(var(--accent), 0.5);
+  }
+  .post-type-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.6rem;
+  }
+  .mini-card {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+    background: rgb(var(--surface));
+    border: 1px solid rgba(var(--border), 0.35);
+    overflow: hidden;
+  }
+  .mini-card.is-signal {
+    border-color: rgba(200, 50, 50, 0.45);
+  }
+  .mini-card.is-hallucination {
+    border-color: rgba(60, 100, 230, 0.45);
+  }
+  .mini-matrix {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.55;
+    mix-blend-mode: screen;
+  }
+  .mini-slash {
+    position: absolute;
+    bottom: 3px;
+    left: 5px;
+    font-size: 0.5rem;
+    color: rgba(var(--border), 0.35);
+    font-family: 'JetBrainsMonoNerd', monospace;
+    z-index: 2;
+  }
+  .mini-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 12px;
+    background: rgba(180, 40, 40, 0.25);
+    z-index: 2;
+  }
+  .mini-type-text {
+    font-size: 0.75rem;
+    line-height: 1.65;
+    color: rgba(var(--muted), 0.65);
   }
 </style>
+
+<script is:inline>
+(function () {
+  const CHARS = '0123456789ABCDEF01░▒█ ';
+  const FONT  = 7;
+
+  function startMini(canvas) {
+    const card = canvas.parentElement;
+    const blu  = card && card.classList.contains('is-hallucination');
+    const w = 64, h = 64;
+    canvas.width  = w;
+    canvas.height = h;
+    const ctx  = canvas.getContext('2d');
+    const cols = Math.floor(w / FONT);
+    const drops = Array.from({length: cols}, () => Math.floor(Math.random() * -(h / FONT)));
+
+    setInterval(() => {
+      ctx.fillStyle = 'rgba(0,0,0,0.08)';
+      ctx.fillRect(0, 0, w, h);
+      ctx.font = FONT + 'px monospace';
+      for (let i = 0; i < cols; i++) {
+        const y = drops[i];
+        if (y < 0) { drops[i]++; continue; }
+        const ch = CHARS[Math.floor(Math.random() * CHARS.length)];
+        ctx.fillStyle = blu ? 'rgba(120,160,255,0.9)' : 'rgba(255,110,110,0.9)';
+        ctx.fillText(ch, i * FONT, y * FONT);
+        if (y * FONT > h && Math.random() > 0.975) drops[i] = Math.floor(Math.random() * -10);
+        else drops[i]++;
+      }
+    }, 110);
+  }
+
+  function init() {
+    document.querySelectorAll('.mini-matrix').forEach(startMini);
+  }
+
+  document.readyState === 'loading'
+    ? document.addEventListener('DOMContentLoaded', init)
+    : init();
+
+  // copy button
+  const btn   = document.getElementById('btc-copy');
+  const lbl   = document.getElementById('btc-copy-label');
+  const addr  = document.getElementById('btc-addr');
+  if (btn && addr) {
+    btn.addEventListener('click', () => {
+      const text = addr.textContent.trim();
+      const done = () => { lbl.textContent = 'copied'; setTimeout(() => { lbl.textContent = 'copy'; }, 1800); };
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(done);
+      } else {
+        // fallback for http / local dev
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.cssText = 'position:fixed;opacity:0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        done();
+      }
+    });
+  }
+})();
+</script>

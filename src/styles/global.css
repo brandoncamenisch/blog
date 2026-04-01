@@ -1,3 +1,9 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 :root {
   --accent: 83, 255, 136;
   --accent-bright: 135, 255, 172;
@@ -17,9 +23,17 @@
 }
 
 @font-face {
-  font-family: 'NotoMonoNerd';
-  src: url('/fonts/noto-mono-nerd-font-mono-regular.ttf') format('truetype');
+  font-family: 'JetBrainsMonoNerd';
+  src: url('/fonts/jetbrains-mono-nerd-font-regular.ttf') format('truetype');
   font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JetBrainsMonoNerd';
+  src: url('/fonts/jetbrains-mono-nerd-font-bold.ttf') format('truetype');
+  font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
@@ -45,9 +59,9 @@ html {
 }
 
 body {
-  font-family: 'NotoMonoNerd', 'Atkinson', monospace;
+  font-family: 'JetBrainsMonoNerd', 'Atkinson', monospace;
   margin: 0;
-  padding: 0;
+  padding: 0 0 2.5rem;  /* space for fixed bottom nav */
   text-align: left;
   background:
     radial-gradient(circle at top, rgba(var(--glow), 0.12), transparent 30%),
@@ -82,13 +96,11 @@ body > * {
 }
 
 main {
-  width: 840px;
-  max-width: calc(100% - 2rem);
+  width: 100%;
+  max-width: 100%;
   margin: auto;
-  padding: 0 1rem 0;
+  padding: 0 1rem;
   background: rgba(var(--surface), 0.96);
-  border-left: 1px solid rgba(var(--border), 0.48);
-  border-right: 1px solid rgba(var(--border), 0.48);
   box-shadow: 0 0 42px rgba(var(--glow), 0.08);
   min-height: 60vh;
 }
@@ -157,20 +169,20 @@ table {
 img {
   max-width: 100%;
   height: auto;
-  border-radius: 8px;
+  border-radius: 2px;
 }
 
 code {
   padding: 2px 5px;
-  background-color: rgba(var(--surface-alt), 0.98);
-  border-radius: 2px;
+  background-color: rgba(var(--surface-alt), 0.72);
+  border-radius: 0;
   border: 1px solid rgba(var(--border), 0.18);
 }
 
 pre {
   padding: 1.5em;
-  border-radius: 8px;
-  background: rgba(var(--surface-alt), 0.96);
+  border-radius: 0;
+  background: rgba(var(--surface-alt), 0.65);
   border: 1px solid rgba(var(--border), 0.2);
   overflow-x: auto;
 }
@@ -216,9 +228,9 @@ hr {
 }
 
 .terminal-panel {
-  background: rgba(var(--surface), 0.88);
+  background: rgba(var(--surface), 0.55);
   border: 1px solid rgba(var(--border), 0.35);
-  border-radius: 14px;
+  border-radius: 0;
   box-shadow: var(--box-shadow);
   padding: 1.4rem 1.5rem;
   margin-bottom: 1.4rem;
@@ -256,8 +268,8 @@ hr {
   gap: 0.55rem;
   padding: 0.65rem 0.9rem;
   border: 1px solid rgba(var(--border), 0.4);
-  border-radius: 8px;
-  background: rgba(var(--surface-alt), 0.9);
+  border-radius: 0;
+  background: rgba(var(--surface-alt), 0.6);
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }

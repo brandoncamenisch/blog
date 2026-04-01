@@ -1,0 +1,346 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import Header from '../../components/Header.astro';
+import { timeline } from '../../data/timeline';
+const events = [...timeline].reverse();
+---
+
+<!doctype html>
+<html lang="en">
+<head>
+  <BaseHead title="Timeline" description="A vertical record of work and life." />
+  <style>
+    main {
+      width: 100%;
+      max-width: 100%;
+      margin: 0;
+      padding: 2rem 0 5rem;
+    }
+
+    .page-header {
+      padding: 1.5rem 2rem 2rem;
+      border-bottom: 1px solid rgba(var(--border), 0.3);
+      margin-bottom: 0;
+      text-align: center;
+    }
+    .page-header h1 {
+      font-size: 1.1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: rgb(var(--accent-bright));
+      text-shadow: 0 0 12px rgba(var(--glow), 0.45);
+      margin: 0 0 0.35rem;
+    }
+    .page-header .prompt {
+      color: rgb(var(--muted));
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
+      margin: 0;
+    }
+
+    /* ── vertical tree ── */
+    .timeline {
+      position: relative;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* centered vertical line */
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: calc(50% - 0.5px);
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: linear-gradient(
+        to bottom,
+        rgba(var(--accent), 0.04),
+        rgba(var(--accent), 0.5) 4%,
+        rgba(var(--accent), 0.3) 88%,
+        transparent
+      );
+    }
+
+    /* one row per year: left card | center dot+year | right card */
+    .tl-item {
+      display: grid;
+      grid-template-columns: 1fr 4rem 1fr;
+      align-items: start;
+      position: relative;
+      padding: 0.5rem 0;
+    }
+
+    /* ── center column ── */
+    .tl-center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 1rem;
+      gap: 0.35rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tl-dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      border: 1px solid rgba(var(--accent), 0.55);
+      background: rgb(var(--black));
+      box-shadow: 0 0 5px rgba(var(--glow), 0.25);
+      flex-shrink: 0;
+      transition: box-shadow 0.2s, border-color 0.2s;
+    }
+    .tl-item:hover .tl-dot {
+      box-shadow: 0 0 12px rgba(var(--glow), 0.6);
+      border-color: rgb(var(--accent-bright));
+    }
+    .tl-item.has-milestone .tl-dot {
+      background: rgba(var(--accent), 0.15);
+      border-color: rgb(var(--accent-bright));
+      box-shadow: 0 0 8px rgba(var(--glow), 0.4);
+    }
+
+    .tl-year {
+      font-size: 0.58rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: rgba(var(--muted), 0.6);
+      white-space: nowrap;
+      text-align: center;
+    }
+
+    /* ── left column (work) ── */
+    .tl-left {
+      padding-right: 1.5rem;
+      padding-left: 1rem;
+      display: flex;
+      justify-content: flex-end;
+      position: relative;
+    }
+
+    /* ── right column (life) ── */
+    .tl-right {
+      padding-left: 1.5rem;
+      padding-right: 1rem;
+      position: relative;
+      /* offset life cards down for visual flow */
+      padding-top: 1.5rem;
+    }
+
+    /* horizontal connectors */
+    .tl-left.has-card::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 1.95rem;
+      width: 1.5rem;
+      height: 1px;
+      background: rgba(var(--border), 0.28);
+    }
+    .tl-right.has-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 3.45rem; /* 1.5rem offset + 1.95rem */
+      width: 1.5rem;
+      height: 1px;
+      background: rgba(var(--border), 0.28);
+    }
+
+    /* ── cards ── */
+    .tl-card {
+      width: 100%;
+      max-width: 460px;
+      background: rgba(var(--surface), 0.5);
+      border: 1px solid rgba(var(--border), 0.25);
+      padding: 0.75rem 0.95rem;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .tl-left .tl-card  { margin-left: auto; }
+    .tl-right .tl-card { margin-right: auto; }
+
+    .tl-item:hover .tl-card {
+      border-color: rgba(var(--border), 0.5);
+      background: rgba(var(--surface), 0.7);
+    }
+
+    /* left accent bar */
+    .tl-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 2px;
+    }
+    .tl-card.work-card::before      { background: rgba(var(--accent), 0.55);  }
+    .tl-card.work-card.milestone::before { background: rgba(var(--accent), 0.65); }
+    .tl-card.life-card::before      { background: rgba(var(--accent), 0.35); }
+
+    .tl-title {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: rgb(var(--text));
+      margin: 0 0 0.15rem;
+      padding-right: 3rem;
+    }
+
+    .type-badge {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      font-size: 0.56rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 0.08rem 0.28rem;
+    }
+    .work-card .type-badge           { color: rgba(var(--accent-bright), 0.8); border: 1px solid rgba(var(--accent), 0.28); }
+    .work-card.milestone .type-badge { color: rgb(var(--accent-bright)); border: 1px solid rgba(var(--accent),0.28); }
+    .life-card .type-badge           { color: rgba(var(--muted), 0.8);   border: 1px solid rgba(var(--border), 0.22); }
+
+    .tl-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.2rem 0.65rem;
+      margin-bottom: 0.45rem;
+    }
+    .tl-role { font-size: 0.7rem; color: rgb(var(--accent-bright)); letter-spacing: 0.03em; }
+    .tl-org  { font-size: 0.7rem; color: rgb(var(--muted)); letter-spacing: 0.03em; }
+    .tl-org::before { content: '@ '; opacity: 0.4; }
+
+    .tl-desc {
+      font-size: 0.78rem;
+      color: rgb(var(--muted));
+      line-height: 1.55;
+      margin: 0 0 0.4rem;
+    }
+
+    .tl-section-label {
+      font-size: 0.56rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgba(var(--muted), 0.4);
+      margin: 0.35rem 0 0.18rem;
+    }
+
+    .tl-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.22rem;
+      margin-bottom: 0.15rem;
+    }
+    .tl-pill {
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.07rem 0.32rem;
+    }
+    .tl-pill.stack    { color: rgba(var(--accent-bright),0.8); border: 1px solid rgba(var(--accent),0.22); background: rgba(var(--accent),0.04); }
+    .tl-pill.learning { color: rgba(255,200,80,0.75);          border: 1px solid rgba(255,200,80,0.18);   background: rgba(255,200,80,0.03); }
+    .tl-pill.tag      { color: rgba(var(--muted),0.65);        border: 1px solid rgba(var(--border),0.16); }
+
+    /* ── mobile ── */
+    @media (max-width: 720px) {
+      main { padding: 1.5rem 0 5rem; }
+      .timeline::before { left: 7px; }
+
+      .tl-item {
+        display: block;
+        padding: 0 0 0 2rem;
+        margin-bottom: 0;
+      }
+
+      .tl-center {
+        position: absolute;
+        left: 0;
+        top: 0.3rem;
+        flex-direction: row;
+        padding-top: 0;
+        gap: 0.4rem;
+      }
+
+      .tl-left, .tl-right {
+        padding: 0 0.75rem 0 0;
+        display: block;
+        margin-bottom: 0.75rem;
+      }
+      .tl-right { padding-top: 0; }
+      .tl-left.has-card::after,
+      .tl-right.has-card::before { display: none; }
+
+      .tl-card { max-width: 100%; }
+      .tl-left .tl-card, .tl-right .tl-card { margin: 0; }
+    }
+  </style>
+</head>
+<body>
+  <Header />
+  <main>
+    <div class="page-header">
+      <h1>Timeline</h1>
+      <p class="prompt">$ git log --all --format="%ad %s" --date=short | sort</p>
+    </div>
+
+    <ol class="timeline">
+      {events.map((entry) => (
+        <li class={`tl-item${entry.work?.isMilestone ? ' has-milestone' : ''}`}>
+
+          <div class={`tl-left${entry.work ? ' has-card' : ''}`}>
+            {entry.work && (
+              <div class={`tl-card work-card${entry.work.isMilestone ? ' milestone' : ''}`}>
+                <span class="type-badge">/work</span>
+                <h2 class="tl-title">{entry.work.title}</h2>
+                {(entry.work.role || entry.work.org) && (
+                  <div class="tl-meta">
+                    {entry.work.role && entry.work.role !== '—' && <span class="tl-role">{entry.work.role}</span>}
+                    {entry.work.org && <span class="tl-org">{entry.work.org}</span>}
+                  </div>
+                )}
+                {entry.work.description && <p class="tl-desc">{entry.work.description}</p>}
+                {entry.work.stack && entry.work.stack.length > 0 && (
+                  <><div class="tl-section-label">stack</div>
+                  <div class="tl-pills">{entry.work.stack.map(s => <span class="tl-pill stack">{s}</span>)}</div></>
+                )}
+                {entry.work.learning && entry.work.learning.length > 0 && (
+                  <><div class="tl-section-label">learning</div>
+                  <div class="tl-pills">{entry.work.learning.map(l => <span class="tl-pill learning">{l}</span>)}</div></>
+                )}
+                {entry.work.tags && entry.work.tags.length > 0 && (
+                  <><div class="tl-section-label">tags</div>
+                  <div class="tl-pills">{entry.work.tags.map(t => <span class="tl-pill tag">{t}</span>)}</div></>
+                )}
+              </div>
+            )}
+          </div>
+
+          <div class="tl-center">
+            <div class="tl-dot"></div>
+            <span class="tl-year">{entry.year}</span>
+          </div>
+
+          <div class={`tl-right${entry.life ? ' has-card' : ''}`}>
+            {entry.life && (
+              <div class="tl-card life-card">
+                <span class="type-badge">/life</span>
+                <h2 class="tl-title">{entry.life.title}</h2>
+                {entry.life.description && <p class="tl-desc">{entry.life.description}</p>}
+                {entry.life.tags && entry.life.tags.length > 0 && (
+                  <><div class="tl-section-label">tags</div>
+                  <div class="tl-pills">{entry.life.tags.map(t => <span class="tl-pill tag">{t}</span>)}</div></>
+                )}
+              </div>
+            )}
+          </div>
+
+        </li>
+      ))}
+    </ol>
+  </main>
+  <Footer />
+</body>
+</html>

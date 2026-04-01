@@ -1,0 +1,398 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+import Header from '../../components/Header.astro';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
+
+const posts = (await getCollection('work')).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+---
+
+<!doctype html>
+<html lang="en">
+<head>
+<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+<style>
+main {
+width: 100%;
+}
+.grid {
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+gap: 1px;
+list-style: none;
+margin: 0;
+padding: 0;
+border: 1px solid rgba(var(--border), 0.38);
+}
+.grid :global(li) {
+border: 1px solid rgba(var(--border), 0.38);
+margin: -1px 0 0 -1px;
+overflow: hidden;
+position: relative;
+transition: border-color 0.2s, box-shadow 0.2s;
+}
+/* ── sweep line: red for reviewed, blue for hallucination ── */
+.grid :global(li::before) {
+content: '';
+position: absolute;
+top: 0;
+left: -100%;
+width: 100%;
+height: 2px;
+transition: left 0.4s ease;
+z-index: 10;
+}
+.grid :global(li.is-reviewed::before) {
+background: linear-gradient(90deg, transparent, rgb(220, 60, 60), transparent);
+}
+.grid :global(li.is-hallucination::before) {
+background: linear-gradient(90deg, transparent, rgb(60, 100, 230), transparent);
+}
+.grid :global(li:hover::before) {
+left: 100%;
+}
+/* ── resting pip: bottom-right dot ── */
+.grid :global(li::after) {
+content: '';
+position: absolute;
+bottom: 4px;
+right: 4px;
+width: 5px;
+height: 5px;
+z-index: 5;
+pointer-events: none;
+transition: opacity 0.2s;
+}
+.grid :global(li.is-reviewed::after) {
+background: rgba(200, 50, 50, 0.5);
+}
+.grid :global(li.is-hallucination::after) {
+background: rgba(60, 100, 230, 0.5);
+}
+.grid :global(li:hover::after) { opacity: 0; }
+/* ── hover borders ── */
+.grid :global(li.is-reviewed:hover) {
+border-color: rgba(200, 50, 50, 0.65);
+box-shadow: 0 0 20px rgba(180, 30, 30, 0.22);
+}
+.grid :global(li.is-hallucination:hover) {
+border-color: rgba(50, 90, 210, 0.65);
+box-shadow: 0 0 20px rgba(30, 70, 200, 0.22);
+}
+.grid :global(li a) {
+display: block;
+text-decoration: none;
+}
+/* ── card base ── */
+.grid :global(.card) {
+position: relative;
+aspect-ratio: 1 / 1;
+overflow: hidden;
+background: rgba(var(--surface), 0.95);
+}
+/* ── null hatch: subtle border color ── */
+.grid :global(.card.is-null) {
+background: rgb(var(--surface));
+background-image:
+  repeating-linear-gradient(
+    45deg,
+    rgba(var(--border), 0.07) 0px,
+    rgba(var(--border), 0.07) 1px,
+    transparent 1px,
+    transparent 10px
+  );
+}
+.grid :global(li:hover .card.is-null) {
+background-image:
+  repeating-linear-gradient(
+    45deg,
+    rgba(var(--border), 0.13) 0px,
+    rgba(var(--border), 0.13) 1px,
+    transparent 1px,
+    transparent 10px
+  );
+}
+.grid :global(.thumb) {
+width: 100%;
+height: 100%;
+object-fit: cover;
+display: block;
+transition: transform 0.4s ease, filter 0.3s ease;
+filter: brightness(0.85) saturate(0.9);
+}
+.grid :global(li:hover .thumb) {
+transform: scale(1.04);
+filter: brightness(1.0) saturate(1.1);
+}
+/* ── gradient overlay: standard black ── */
+.grid :global(.card::after) {
+content: '';
+position: absolute;
+inset: 0;
+background: linear-gradient(
+to bottom,
+rgba(0,0,0,0.45) 0%,
+transparent 28%,
+transparent 50%,
+rgba(0,0,0,0.78) 100%
+);
+pointer-events: none;
+z-index: 1;
+}
+.grid :global(.card.is-null::after) {
+display: none;
+}
+/* ── card-meta ── */
+.grid :global(.card-meta) {
+position: absolute;
+top: 0;
+left: 0;
+z-index: 3;
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+gap: 0;
+}
+/* ── date: green ── */
+.grid :global(.date) {
+margin: 0;
+padding: 0.25rem 0.55rem;
+background: rgba(0, 0, 0, 0.6);
+color: rgb(var(--accent-bright));
+text-transform: uppercase;
+letter-spacing: 0.1em;
+font-size: 0.7rem;
+font-family: 'JetBrainsMonoNerd', monospace;
+}
+.grid :global(.card.is-null .date) {
+color: rgba(var(--muted), 0.45);
+background: rgba(0, 0, 0, 0.35);
+}
+/* ── tags: green ── */
+.grid :global(.card-tags) {
+display: flex;
+flex-direction: column;
+gap: 0;
+padding: 0.2rem 0.55rem;
+background: rgba(0, 0, 0, 0.5);
+}
+.grid :global(.card-tags span) {
+font-family: 'JetBrainsMonoNerd', monospace;
+font-size: 0.6rem;
+letter-spacing: 0.06em;
+color: rgba(var(--accent-bright), 0.6);
+line-height: 1.6;
+}
+.grid :global(.card-tags span::before) {
+content: '# ';
+opacity: 0.4;
+}
+.grid :global(.card-tags .tag-flag::before) {
+content: '! ';
+opacity: 0.7;
+}
+.grid :global(.card-tags .tag-hallucination) {
+color: rgba(60, 100, 230, 0.9);
+}
+.grid :global(.card-tags .tag-signa) {
+color: rgba(200, 50, 50, 0.9);
+}
+.grid :global(.card.is-null .card-tags) {
+background: rgba(0, 0, 0, 0.2);
+}
+.grid :global(.card.is-null .card-tags span) {
+color: rgba(var(--muted), 0.3);
+}
+.grid :global(.card.is-null .card-tags .tag-hallucination) {
+color: rgba(60, 100, 230, 0.75);
+}
+.grid :global(.card.is-null .card-tags .tag-signa) {
+color: rgba(200, 50, 50, 0.75);
+}
+/* ── title: white / green on hover ── */
+.grid :global(.title) {
+position: absolute;
+bottom: 0;
+left: 0;
+right: 0;
+height: calc(3 * 0.95rem * 1.3 + 1.2rem);
+margin: 0;
+padding: 0.6rem 0.75rem 0;
+background: rgba(0, 0, 0, 0.55);
+color: #fff;
+font-size: 0.95rem;
+line-height: 1.3;
+font-weight: 600;
+display: -webkit-box;
+-webkit-line-clamp: 3;
+-webkit-box-orient: vertical;
+overflow: hidden;
+z-index: 3;
+}
+.grid :global(li:hover .title) {
+color: rgb(var(--accent-bright));
+}
+/* ── null label ── */
+.grid :global(.null-label) {
+position: absolute;
+bottom: 0;
+left: 0;
+right: 0;
+height: calc(3 * 0.95rem * 1.3 + 1.2rem);
+display: flex;
+align-items: center;
+padding: 0 0.75rem;
+background: rgba(0, 0, 0, 0.25);
+z-index: 3;
+color: rgba(var(--border), 0.22);
+font-family: 'JetBrainsMonoNerd', monospace;
+font-size: 0.8rem;
+letter-spacing: 0.2em;
+z-index: 2;
+transition: color 0.2s;
+}
+.grid :global(li:hover .null-label) {
+color: rgba(var(--border), 0.45);
+}
+/* ── matrix rain canvas ── */
+.grid :global(.matrix-rain) {
+position: absolute;
+inset: 0;
+width: 100%;
+height: 100%;
+z-index: 2;
+pointer-events: none;
+opacity: 0.45;
+mix-blend-mode: screen;
+}
+@media (max-width: 480px) {
+.grid {
+grid-template-columns: 1fr 1fr;
+}
+}
+</style>
+</head>
+<body>
+<Header />
+<main>
+<ul class="grid">
+{posts.map((post) => {
+const heroImage = post.data.generatedHeroImage ?? post.data.heroImage;
+return (
+        <li class={post.data.hallucination ? 'is-hallucination' : 'is-reviewed'}>
+          <a href={`/work/${post.id}/`}>
+            {post.data.reviewed ? (
+              <div class={`card${post.data.hallucination ? ' is-hallucination' : ''}`}>
+                <canvas class="matrix-rain" aria-hidden="true"></canvas>
+                {heroImage && (
+                  typeof heroImage === 'string'
+                    ? <img class="thumb" src={heroImage} alt="" loading="lazy" decoding="async" />
+                    : <Image class="thumb" width={400} height={400} src={heroImage} alt="" loading="lazy" />
+                )}
+                <div class="card-meta">
+                  <p class="date"><FormattedDate date={post.data.pubDate} /></p>
+                  {(post.data.tags?.length > 0 || post.data.hallucination || post.data.signa) && (
+                    <div class="card-tags">
+                      {post.data.hallucination && <span class="tag-flag tag-hallucination">hallucination</span>}
+                      {post.data.signa && <span class="tag-flag tag-signa">signa</span>}
+                      {post.data.tags?.slice(0, 3).map(t => <span>{t}</span>)}
+                    </div>
+                  )}
+                </div>
+                <h4 class="title">{post.data.title}</h4>
+              </div>
+            ) : (
+              <div class={`card is-null${post.data.hallucination ? ' is-hallucination' : ''}`}>
+                <canvas class="matrix-rain" aria-hidden="true"></canvas>
+                {heroImage && (
+                  typeof heroImage === 'string'
+                    ? <img class="thumb" src={heroImage} alt="" loading="lazy" decoding="async" />
+                    : <Image class="thumb" width={400} height={400} src={heroImage} alt="" />
+                )}
+                <div class="card-meta">
+                  <p class="date"><FormattedDate date={post.data.pubDate} /></p>
+                  {(post.data.tags?.length > 0 || post.data.hallucination || post.data.signa) && (
+                    <div class="card-tags">
+                      {post.data.hallucination && <span class="tag-flag tag-hallucination">hallucination</span>}
+                      {post.data.signa && <span class="tag-flag tag-signa">signa</span>}
+                      {post.data.tags?.slice(0, 3).map(t => <span>{t}</span>)}
+                    </div>
+                  )}
+                </div>
+                <span class="null-label">///</span>
+                {post.data.title && <h4 class="title">{post.data.title}</h4>}
+              </div>
+            )}
+          </a>
+        </li>
+);
+})}
+</ul>
+</main>
+<Footer count={posts.length} />
+</body>
+</html>
+
+<script is:inline>
+(function () {
+  const CHARS = '0123456789ABCDEF01░▒█ ';
+  const FONT  = 10;
+  const active = new Map();
+
+  function start(canvas) {
+    if (active.has(canvas)) return;
+    const li  = canvas.closest('li');
+    const blu = li && li.classList.contains('is-hallucination');
+    const w   = canvas.parentElement.offsetWidth  || 260;
+    const h   = canvas.parentElement.offsetHeight || 260;
+    canvas.width  = w;
+    canvas.height = h;
+    const ctx  = canvas.getContext('2d');
+    const cols = Math.floor(w / FONT);
+    const drops = Array.from({length: cols}, () => Math.floor(Math.random() * -(h / FONT)));
+
+    const id = setInterval(() => {
+      ctx.fillStyle = 'rgba(0,0,0,0.07)';
+      ctx.fillRect(0, 0, w, h);
+      ctx.font = FONT + 'px monospace';
+      for (let i = 0; i < cols; i++) {
+        const y = drops[i];
+        if (y < 0) { drops[i]++; continue; }
+        const ch  = CHARS[Math.floor(Math.random() * CHARS.length)];
+        const xPx = i * FONT;
+        const yPx = y * FONT;
+        ctx.fillStyle = blu ? 'rgba(140,170,255,0.95)' : 'rgba(255,130,130,0.85)';
+        ctx.fillText(ch, xPx, yPx);
+        ctx.fillStyle = blu ? 'rgba(50,90,200,0.55)'  : 'rgba(180,40,40,0.45)';
+        ctx.fillText(ch, xPx, yPx - FONT);
+        if (yPx > h && Math.random() > 0.975) drops[i] = Math.floor(Math.random() * -20);
+        else drops[i]++;
+      }
+    }, 120);
+    active.set(canvas, id);
+  }
+
+  function stop(canvas) {
+    const id = active.get(canvas);
+    if (id) { clearInterval(id); active.delete(canvas); }
+  }
+
+  function init() {
+    const nodes = document.querySelectorAll('.matrix-rain');
+    if (!nodes.length) return;
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => e.isIntersecting ? start(e.target) : stop(e.target));
+    }, { rootMargin: '300px' });
+    nodes.forEach(c => obs.observe(c));
+  }
+
+  document.readyState === 'loading'
+    ? document.addEventListener('DOMContentLoaded', init)
+    : init();
+})();
+</script>
