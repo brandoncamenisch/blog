@@ -3,6 +3,7 @@ FROM python:3.12-slim
 RUN apt-get update \
   && apt-get install -y --no-install-recommends git \
   && rm -rf /var/lib/apt/lists/* \
-  && pip install --no-cache-dir pyyaml pillow requests
+  && pip install --no-cache-dir pyyaml pillow requests \
+  && git config --system --add safe.directory /repo
 
 WORKDIR /repo
