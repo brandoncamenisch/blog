@@ -82,7 +82,7 @@ wait_for_ollama() {
 
 run_generator() {
   docker_compose_cmd -f "$compose_file" run --rm \
-    --no-TTY \
+    -T \
     generator python3 /repo/scripts/comfyui-site-images.py "$@"
 }
 
