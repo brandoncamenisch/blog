@@ -15,6 +15,7 @@ services:
 
   ollama:
     image: ollama/ollama:0.6.2
+    container_name: chronocommit-ollama-global
     ports:
       - "127.0.0.1:11434:11434"
     volumes:
