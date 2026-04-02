@@ -51,5 +51,4 @@ comfyui/ollama/*
 !comfyui/ollama/.gitkeep
 public/images/generated/*.jpg
 public/images/generated/*.png
-public/images/generated/*.webp
 public/images/generated/*.json

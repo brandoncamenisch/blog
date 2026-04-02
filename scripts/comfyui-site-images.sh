@@ -29,6 +29,9 @@ manifest_file="$repo_root/comfyui/site-images.json"
 python_script="$repo_root/scripts/comfyui-site-images.py"
 comfyui_api_url="${COMFYUI_API_URL:-http://127.0.0.1:8188}"
 ollama_api_url="${OLLAMA_API_URL:-http://127.0.0.1:11434}"
+# Inside the generator container, services are reachable by name
+generator_comfyui_url="http://comfyui:8188"
+generator_ollama_url="http://ollama:11434"
 
 docker_compose_cmd() {
   if docker compose version >/dev/null 2>&1; then
@@ -77,12 +80,18 @@ wait_for_ollama() {
   exit 1
 }
 
+run_generator() {
+  docker_compose_cmd -f "$compose_file" run --rm \
+    --no-TTY \
+    generator python3 /repo/scripts/comfyui-site-images.py "$@"
+}
+
 preflight_generation() {
-  python3 "$python_script" \
-    --repo-root "$repo_root" \
-    --manifest "$manifest_file" \
-    --api-url "$comfyui_api_url" \
-    --ollama-url "$ollama_api_url" \
+  run_generator \
+    --repo-root /repo \
+    --manifest /repo/comfyui/site-images.json \
+    --api-url "$generator_comfyui_url" \
+    --ollama-url "$generator_ollama_url" \
     --preflight \
     "$@"
 }
@@ -160,11 +169,11 @@ case "$command" in
     [[ $preflight_status -eq 11 ]] && exit 0
     [[ $preflight_status -ne 0 ]] && exit "$preflight_status"
     ensure_stack
-    python3 "$python_script" \
-      --repo-root "$repo_root" \
-      --manifest "$manifest_file" \
-      --api-url "$comfyui_api_url" \
-      --ollama-url "$ollama_api_url" \
+    run_generator \
+      --repo-root /repo \
+      --manifest /repo/comfyui/site-images.json \
+      --api-url "$generator_comfyui_url" \
+      --ollama-url "$generator_ollama_url" \
       "$@"
     ;;
   generate-staged)
@@ -172,11 +181,11 @@ case "$command" in
     [[ $preflight_status -eq 11 ]] && exit 0
     [[ $preflight_status -ne 0 ]] && exit "$preflight_status"
     ensure_stack
-    python3 "$python_script" \
-      --repo-root "$repo_root" \
-      --manifest "$manifest_file" \
-      --api-url "$comfyui_api_url" \
-      --ollama-url "$ollama_api_url" \
+    run_generator \
+      --repo-root /repo \
+      --manifest /repo/comfyui/site-images.json \
+      --api-url "$generator_comfyui_url" \
+      --ollama-url "$generator_ollama_url" \
       --targets-from-staged
     ;;
   -h|--help|help)

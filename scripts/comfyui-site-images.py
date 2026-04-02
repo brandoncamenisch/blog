@@ -15,6 +15,7 @@ from pathlib import Path
 from textwrap import shorten
 
 import yaml
+from PIL import Image
 
 
 def parse_args() -> argparse.Namespace:
@@ -100,7 +101,7 @@ def blog_slug_from_path(relative_path: str) -> str:
 
 
 def generated_article_output(slug: str, image_id: str) -> str:
-    return f"public/images/generated/posts/{slug}/{image_id}.jpg"
+    return f"public/images/generated/posts/{slug}/{image_id}.webp"
 
 
 def article_target_name(slug: str, image_id: str) -> str:
@@ -657,7 +658,11 @@ def copy_generated_file(repo_root: Path, prompt_history: dict, destination: Path
             source = source / image["filename"]
             if source.exists():
                 destination.parent.mkdir(parents=True, exist_ok=True)
-                shutil.copy2(source, destination)
+                if destination.suffix.lower() == ".webp":
+                    img = Image.open(source)
+                    img.save(destination, "WEBP", quality=82, method=6)
+                else:
+                    shutil.copy2(source, destination)
                 return source
     raise FileNotFoundError("ComfyUI finished without a readable generated image in comfyui/output/")
 
@@ -743,7 +748,7 @@ def render_target(
         prompt_history = wait_for_output(api_url, prompt_id)
 
         if picks_mode:
-            destination = picks_dir / f"{i + 1:02d}-seed{seed}.jpg"
+            destination = picks_dir / f"{i + 1:02d}-seed{seed}.webp"
         else:
             destination = repo_root / config["output"]
 

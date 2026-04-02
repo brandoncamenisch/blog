@@ -1,4 +1,18 @@
 services:
+  generator:
+    build:
+      context: .
+      dockerfile: Dockerfile.generator
+    volumes:
+      - ..:/repo
+    environment:
+      - COMFYUI_API_URL=http://comfyui:8188
+      - OLLAMA_API_URL=http://ollama:11434
+    working_dir: /repo
+    networks:
+      - comfyui-net
+    profiles: ["generate"]
+
   ollama:
     image: ollama/ollama:0.6.2
     ports:
@@ -7,6 +21,8 @@ services:
       - ./ollama:/root/.ollama
     environment:
       - CUDA_VISIBLE_DEVICES=1
+    networks:
+      - comfyui-net
     deploy:
       resources:
         reservations:
@@ -44,3 +60,9 @@ services:
       - ./output:/workspace/output
       - ./user:/workspace/user
       - ./extra_model_paths.yaml:/workspace/extra_model_paths.yaml:ro
+    networks:
+      - comfyui-net
+
+networks:
+  comfyui-net:
+    driver: bridge
